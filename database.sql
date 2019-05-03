@@ -5,8 +5,7 @@ CREATE TABLE users (
 
 INSERT INTO users (user_name) 
 VALUES 
-(
-  'filipe', 
-  'rafael', 
-  'ricardo'
-); 
+('filipe'), 
+('rafael'), 
+('ricardo')
+; 
