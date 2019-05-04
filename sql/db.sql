@@ -3,8 +3,8 @@ DROP TABLE staff;
 DROP TABLE entries;
 DROP TABLE events;
 DROP TABLE tickets;
-DROP TABLE users;
 DROP TABLE cards;
+DROP TABLE users;
 
 -- CREATE TABLES
 CREATE TABLE users (
@@ -21,7 +21,7 @@ CREATE TABLE cards (
 );
 
 CREATE TABLE staff (
-    staff_id       INTEGER PRIMARY KEY,
+    staff_id       SERIAL PRIMARY KEY,
     staff_email    TEXT NOT NULL,
     staff_name     TEXT NOT NULL,
     staff_password TEXT DEFAULT '123456' NOT NULL,
@@ -68,11 +68,11 @@ VALUES
 INSERT INTO cards 
 (card_id, user_id_ref)
 VALUES
-(0, 00000000),
-(1, 11111111),
-(2, 22222222),
-(3, 33333333),
-(4, 44444444)
+(00000000, 0),
+(11111111 ,1),
+(22222222, 2),
+(33333333, 3),
+(44444444, 4)
 ;
 
 INSERT INTO staff 
@@ -80,7 +80,7 @@ INSERT INTO staff
 VALUES 
 ('test_admin@test.com',   'test_admin' ,  0), 
 ('test_tickets@test.com', 'test_tickets', 1), 
-('test_entry@test.com',   'test_entry'    2)
+('test_entry@test.com',   'test_entry',   2)
 ; 
 
 INSERT INTO events 
