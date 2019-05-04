@@ -63,6 +63,7 @@ VALUES
 (2, 'luisa@test.com',  'Luisa Silva',    '1981-03-12', 'luisa.jpg'),
 (3, 'maria@test.com',  'Maria Alves',    '1971-03-12', 'maria.jpg'),
 (4, 'rajeet@test.com', 'Rajeet Punjabi', '2009-03-12', 'rajeet.jpg')
+;
 
 INSERT INTO cards 
 (card_id, user_id_ref)
@@ -72,6 +73,7 @@ VALUES
 (2, 22222222),
 (3, 33333333),
 (4, 44444444)
+;
 
 INSERT INTO staff 
 (staff_email, staff_name, staff_type)
@@ -86,7 +88,7 @@ INSERT INTO events
 VALUES
 ('Tomorrowland',   'Festa de música electrónica.', '2019-06-07', 3000, 150, 18),
 ('Festa Batatoon', 'Diversão para crianças.',      '2019-06-07', 50,   10,  8)
-
+;
 
 
 
