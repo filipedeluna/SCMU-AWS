@@ -1,10 +1,10 @@
 -- DROP TABLES
-DROP TABLE users;
-DROP TABLE entries;
-DROP TABLE cards;
-DROP TABLE tickets;
 DROP TABLE staff;
+DROP TABLE entries;
 DROP TABLE events;
+DROP TABLE tickets;
+DROP TABLE users;
+DROP TABLE cards;
 
 -- CREATE TABLES
 CREATE TABLE users (
