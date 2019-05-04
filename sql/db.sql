@@ -1,4 +1,4 @@
---DROP TABLES
+-- DROP TABLES
 DROP TABLE users;
 DROP TABLE entries;
 DROP TABLE cards;
@@ -56,9 +56,22 @@ CREATE TABLE tickets (
 
 -- TEST DATA
 INSERT INTO users 
-(user_email, user_name, user_birthday, user_picture)
+(user_id, user_email, user_name, user_birthday, user_picture)
 VALUES
+(0, 'alex@test.com',   'Alex Santos',    '1994-03-12', 'alex.jpg'),
+(1, 'julio@test.com',  'Júlio Luis',     '1991-08-23', 'julio.jpg'),
+(2, 'luisa@test.com',  'Luisa Silva',    '1981-03-12', 'luisa.jpg'),
+(3, 'maria@test.com',  'Maria Alves',    '1971-03-12', 'maria.jpg'),
+(4, 'rajeet@test.com', 'Rajeet Punjabi', '2009-03-12', 'rajeet.jpg')
+
 INSERT INTO cards 
+(card_id, user_id_ref)
+VALUES
+(0, 00000000),
+(1, 11111111),
+(2, 22222222),
+(3, 33333333),
+(4, 44444444)
 
 INSERT INTO staff 
 (staff_email, staff_name, staff_type)
@@ -69,7 +82,10 @@ VALUES
 ; 
 
 INSERT INTO events 
-
+(event_name, event_description, event_date, event_tickets, event_price, event_min_age)
+VALUES
+('Tomorrowland',   'Festa de música electrónica.', '2019-06-07', 3000, 150, 18),
+('Festa Batatoon', 'Diversão para crianças.',      '2019-06-07', 50,   10,  8)
 
 
 
