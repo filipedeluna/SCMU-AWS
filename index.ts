@@ -12,7 +12,7 @@ import {
 } from './program/dbFunctions';
 
 // Constants
-const PORT = 8000
+const PORT:number = 8000
 
 const app = express()
 const pgp = pgPromise(PGPConfig);
