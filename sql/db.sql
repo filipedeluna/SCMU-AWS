@@ -56,7 +56,8 @@ CREATE TABLE tickets (
 
 -- TEST DATA
 INSERT INTO users 
-
+(user_email, user_name, user_birthday, user_picture)
+VALUES
 INSERT INTO cards 
 
 INSERT INTO staff 
