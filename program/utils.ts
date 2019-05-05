@@ -24,7 +24,7 @@ export const errorHandler = (err, res) => {
     res.sendStatus(500);
   }
   console.error(err);
-  console.error("---------------------------------"););
+  console.error("---------------------------------");
 }
 
 export const writePictureToFile = (filename: string, pictureData) => {
