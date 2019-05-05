@@ -33,15 +33,23 @@ app.get('/', (req, res) =>
   res.send('Hello World!')
 )
 
-// USERS 
+/*
+    USERS 
+*/
+// Get all users or specific user
 app.get('/users', (req, res) => 
-  db.tx(t => 
-    SV.selectAllFromTable(t, DBTables.USERS)
-    .then(data => res.send(data))
-  )
+  db.tx(t => {
+    if (req.query.email)
+      return SV.getUserId(t, req.query.email)
+      .then(data => res.send(data))
+    else
+      return SV.selectAllFromTable(t, DBTables.USERS)
+      .then(data => res.send(data))
+  })
   .catch((err) => Utils.errorHandler(err, res))
 )
 
+// Create user
 app.post('/users', jsonParser, (req, res) => 
   db.tx(t => 
     SV.createNewUser(t, req.body)
@@ -50,7 +58,28 @@ app.post('/users', jsonParser, (req, res) =>
   .catch((err) => Utils.errorHandler(err, res))
 )
 
-// STAFF 
+// Get user info
+app.get('/users/:userId', (req, res) => 
+  db.tx(t => 
+    SV.getUser(t, req.params.userId)
+    .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+// Get user picture
+app.get('/users/:userId/picture', (req, res) => 
+  db.tx(t => {
+    res.type('jpg');
+    return SV.getUserPicture(t, req.params.userId)
+    .then(data => res.send(data))
+  })
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+/*
+    STAFF 
+*/
 app.get('/staff', (req, res) => 
   db.tx(t => 
     SV.selectAllFromTable(t, DBTables.STAFF)
@@ -59,7 +88,9 @@ app.get('/staff', (req, res) =>
   .catch((err) => Utils.errorHandler(err, res))
 )
 
-// CARDS 
+/*
+    CARDS 
+*/ 
 app.get('/cards', (req, res) => 
   db.tx(t => 
     SV.selectAllFromTable(t, DBTables.CARDS)
@@ -68,7 +99,9 @@ app.get('/cards', (req, res) =>
   .catch((err) => Utils.errorHandler(err, res))
 )
 
-// TICKETS 
+/*
+    TICKETS 
+*/
 app.get('/tickets', (req, res) => 
   db.tx(t => 
     SV.selectAllFromTable(t, DBTables.TICKETS)
@@ -77,7 +110,9 @@ app.get('/tickets', (req, res) =>
   .catch((err) => Utils.errorHandler(err, res))
 )
 
-// EVENTS 
+/*
+    EVENTS 
+*/ 
 app.get('/events', (req, res) => 
   db.tx(t => 
     SV.selectAllFromTable(t, DBTables.EVENTS)
@@ -86,7 +121,9 @@ app.get('/events', (req, res) =>
   .catch((err) => Utils.errorHandler(err, res))
 )
 
-// ENTRIES 
+/*
+    ENTRIES 
+*/ 
 app.get('/entries', (req, res) => 
   db.tx(t => 
     SV.selectAllFromTable(t, DBTables.ENTRIES)

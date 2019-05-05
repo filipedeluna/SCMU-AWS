@@ -1,6 +1,7 @@
 import * as Boom from 'boom';
 
-// UTILS
+const fs = require('fs').promises;
+
 export const checkDate = (date: string) => {
   if (!date.match(/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/))
     throw Boom.badRequest(`Invalid date format, use YYYY-MM-DD.`); 
@@ -20,3 +21,16 @@ export const errorHandler = (err, res) => {
     res.sendStatus(500);
   }
 }
+
+export const writePictureToFile = (filename: string, pictureData) => {
+  const fixedPictureData = pictureData.split(';base64,').pop();
+  const buffer = Buffer.from(fixedPictureData, 'base64');
+  
+  return fs.writeFile(filename, buffer)
+  .catch(( )=> { throw Boom.badData('Failed to save picture.'); })
+}
+
+export const readPictureFromFile = (filename: string) =>
+  fs.readFile(filename /*, 'base64' */)
+  //.then(data => `data:image/jpeg;base64, ${data}`)
+  .catch(()=> { throw Boom.notFound('Failed to get picture.'); })

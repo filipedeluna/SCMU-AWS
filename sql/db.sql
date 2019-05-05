@@ -22,7 +22,7 @@ CREATE TABLE cards (
 
 CREATE TABLE staff (
     staff_id       SERIAL PRIMARY KEY,
-    staff_email    TEXT NOT NULL,
+    staff_email    TEXT UNIQUE NOT NULL,
     staff_name     TEXT NOT NULL,
     staff_password TEXT DEFAULT '123456' NOT NULL,
     staff_type     INTEGER NOT NULL DEFAULT 0

@@ -6,23 +6,27 @@ import {
 } from './dbFunctions';
 
 import * as DB from './dbFunctions';
-import { Base64 } from 'js-base64';
-const base64js = require('base64-js');
+
+import * as Utils from './utils';
 
 const uuid = require('uuid/v4');
-const fs = require('fs').promises;
+const PIC_FOLDER = 'pictures/';
 
-// General Functions
+/*
+    GENERAL FUNCTIONS 
+*/ 
 export const selectAllFromTable = (t, table: DBTables) => 
   DB.checkTableExists(t, table)
   .then(() => DB.selectAll(t, table))
 
-// Users
+/*
+    USERS 
+*/
 export const createNewUser = (t, data) => 
   DB.checkTableExists(t, DBTables.USERS)
   .then(() => uuid())
   .then(uuid => {
-    let filename: string = `pictures/${uuid}.jpg`;
+    let filename: string = `${uuid}.jpg`;
       
     return DB.addUser(t, {
       user_email:    data.user_email,
@@ -30,13 +34,19 @@ export const createNewUser = (t, data) =>
       user_birthday: data.user_birthday,
       user_picture:  filename,
     })
-    .then(() => writePictureToFile(filename, data.user_picture))
+    .then(() => Utils.writePictureToFile(`${PIC_FOLDER}${filename}`, data.user_picture))
   })
 
-// File System
-const writePictureToFile = (filename: string, pictureData) => {
-  const fixedPictureData = pictureData.split(';base64,').pop();
+export const getUser = (t, userId) => 
+  DB.checkTableExists(t, DBTables.USERS)
+  .then(() => DB.getUserbyId(t, userId))
 
-  return fs.writeFile(filename, Base64.atob(fixedPictureData))
-  .catch(( )=> { throw Boom.badData('Failed to save picture.'); })
-}
+export const getUserId = (t, userId) => 
+  DB.checkTableExists(t, DBTables.USERS)
+  .then(() => DB.getUserIdByEmail(t, userId))
+
+export const getUserPicture = (t, userId) =>
+  DB.checkTableExists(t, DBTables.USERS)
+  .then(() => DB.getUserPicturebyId(t, userId))
+  .then(res => res.user_picture)
+  .then(filename => Utils.readPictureFromFile(`${PIC_FOLDER}${filename}`))
