@@ -3,7 +3,7 @@ import * as Boom from 'boom';
 const fs = require('fs').promises;
 
 export const checkDate = (date: string) => {
-  if (!date.match(/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/))
+  if (date == undefined || !date.match(/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/))
     throw Boom.badRequest(`Invalid date format, use YYYY-MM-DD.`); 
   return date;
 }
