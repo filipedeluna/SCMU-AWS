@@ -4,11 +4,11 @@ import * as Joi from '@hapi/joi';
 // General
 export const id = id =>
   Joi.validate(id, Joi.number().integer().min(0))
-  .then(result => checkResult(result, `Invalid id.`))
+  .catch(result => checkResult(result, `Invalid id.`))
 
 export const email = email =>
   Joi.validate(email, Joi.string().email())
-  .then(result => checkResult(result, `Invalid email.`))
+  .catch(result => checkResult(result, `Invalid email.`))
 
 // Users
 const userCreateSchema = Joi.object().keys({
@@ -20,7 +20,7 @@ const userCreateSchema = Joi.object().keys({
 
 export const userCreate = user =>
   Joi.validate(user, userCreateSchema)
-  .then(result => checkResult(result, `Invalid data for user creation.`))
+  .catch(result => checkResult(result, `Invalid data for user creation.`))
 
 // Staff
 const staffCreateSchema = Joi.object().keys({
@@ -32,11 +32,10 @@ const staffCreateSchema = Joi.object().keys({
 
 export const staffCreate = staff =>
   Joi.validate(staff, staffCreateSchema)
-  .then(result => checkResult(result, `Invalid data for staff creation.`))
+  .catch(result => checkResult(result, `Invalid data for staff creation.`))
 
 // Utils
-
 const checkResult = (result, errorMessage) => {
-  if (result.error === null)
-    throw Boom.badData(errorMessage, { data: result.error }) 
+  if (result.error !== null)
+    throw Boom.badData(errorMessage, { data: result.details }) 
   }

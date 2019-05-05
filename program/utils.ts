@@ -6,7 +6,7 @@ export const errorHandler = (err, res) => {
   if (Boom.isBoom(err)) {
     console.error("BOOM ERROR----------------------");
     console.error(err.output.payload.message + '\n\n' + JSON.stringify(err.data));
-    res.status(err.output.statusCode).send(err.output.payload.message + '\n\n' + JSON.stringify(err.data));
+    res.status(err.output.statusCode).send(err.output.payload.message + '\n\n' + JSON.stringify(err.data, null, 2));
   } else {
     console.error("SERVER ERROR--------------------");
     console.error(err);
