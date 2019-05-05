@@ -34,6 +34,11 @@ export const staffCreate = staff =>
   Joi.validate(staff, staffCreateSchema)
   .catch(result => checkResult(result, `Invalid data for staff creation.`))
 
+// Cards
+export const cardId = cardId =>
+  Joi.validate(cardId, Joi.number().integer().min(10000000).max(99999999))
+  .catch(result => checkResult(result, `Invalid card id.`))
+
 // Utils
 const checkResult = (result, errorMessage) => {
   if (result.error !== null)

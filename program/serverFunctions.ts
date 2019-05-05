@@ -79,3 +79,22 @@ export const createNewStaff = (t, data) =>
       staff_type:     data.staff_type
     })
   )
+
+/*
+    CARDS 
+*/
+export const addCard = (t, cardId, userId) => 
+  Validate.id(userId)
+  .then(() => Validate.cardId(cardId))
+  .then(() => DB.checkTableExists(t, DBTables.CARDS))
+  .then(() => DB.addCard(t, cardId, userId))
+
+export const getUserCards = (t, userId) => 
+  Validate.id(userId)
+  .then(() => DB.checkTableExists(t, DBTables.CARDS))
+  .then(() => DB.getCardsByUserId(t, userId))
+  
+export const getCardOwner = (t, cardId) =>
+  Validate.cardId(cardId)
+  .then(() => DB.checkTableExists(t, DBTables.CARDS))  
+  .then(() => DB.getCardsByUserId(t, cardId))

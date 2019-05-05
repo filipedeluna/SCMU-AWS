@@ -21,6 +21,9 @@ POST /staff - cria um staff novo. enviar o json seguinte { staff_email: string, 
 
 CARDS\
 GET /cards - devolve todos os cards\
+POST /cards - adiciona um card a um user - enviar o json seguinte { card_id, user_id }\
+GET /cards/(cardId)/user - devolve o user associado ao cartao\
+GET /cards/user/(userId) - devolve todos os cartoes associados ao user\
 ...
 
 -------------------------------------------------

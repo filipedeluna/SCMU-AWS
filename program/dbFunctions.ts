@@ -40,7 +40,6 @@ export const getUserPicturebyId = (t, userId: string) =>
 /*
     STAFF
 */ 
-
 export const getStaffIdByEmail = (t, email: string) =>
   t.one(`SELECT staff_id FROM staff WHERE staff_email = $1`, email) 
   .catch(e => { throw Boom.notFound(`Email not found.`, { data: e }) })
@@ -58,6 +57,23 @@ export const addStaff = (t, user: IInsertStaff) =>
     [user.staff_email, user.staff_name, user.staff_password, user.staff_type]
   ) 
   .catch(e => { throw Boom.badRequest(`Error inserting staff.`, { data: e }); })
+
+/*
+    CARDS
+*/ 
+export const addCard = (t, cardId, userId) =>
+  t.any(`
+    INSERT INTO cards 
+    (card_id, user_id_ref)
+    VALUES
+    ($1, $2)`,
+    [cardId, userId]
+  ) 
+  .catch(e => { throw Boom.badRequest(`Error creating card.`, { data: e }); })
+
+export const getCardsByUserId = (t, userId) =>
+  t.any(`SELECT card_id FROM cards WHERE user_id_ref = $1`, userId) 
+  .catch(e => { throw Boom.badRequest(`Error getting user cards.`, { data: e }); })
 
 /*
     ENUMS 
@@ -80,7 +96,6 @@ interface IInsertUser {
   user_birthday: string,
   user_picture:  string
 }
-
 
 interface IInsertStaff {
   staff_email:    string,

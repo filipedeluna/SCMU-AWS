@@ -122,6 +122,30 @@ app.get('/cards', (req, res) =>
   .catch((err) => Utils.errorHandler(err, res))
 )
 
+app.post('/cards', jsonParser, (req, res) => 
+  db.tx(t => 
+    SV.addCard(t, req.body.card_id, req.body.card_id)
+    .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+app.get('/cards/:cardId/user', (req, res) => 
+  db.tx(t => 
+    SV.getCardOwner(t, req.params.card_id)
+    .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+app.get('/cards/user/:userId', (req, res) => 
+  db.tx(t => 
+    SV.getUserCards(t, req.params.card_id)
+    .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
 /*
     TICKETS 
 */

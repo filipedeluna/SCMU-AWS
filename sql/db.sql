@@ -16,7 +16,7 @@ CREATE TABLE users (
 );
 
 CREATE TABLE cards (
-    card_id     SERIAL PRIMARY KEY,
+    card_id     INTEGER PRIMARY KEY,
     user_id_ref INTEGER NOT NULL REFERENCES users(user_id)
 );
 
