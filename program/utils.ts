@@ -16,8 +16,8 @@ export const checkTimestamp = (timestamp: number) => {
 export const errorHandler = (err, res) => {
   if (Boom.isBoom(err)) {
     console.error("BOOM ERROR----------------------");
-    console.error(err.output.payload.message + '\n\n' + err.data);
-    res.status(err.output.statusCode).send(err.output.payload.message + '\n\n' + err.data);
+    console.error(err.output.payload.message + '\n\n' + JSON.stringify(err.data));
+    res.status(err.output.statusCode).send(err.output.payload.message + '\n\n' + JSON.stringify(err.data));
   } else {
     console.error("SERVER ERROR--------------------");
     console.error(err);
