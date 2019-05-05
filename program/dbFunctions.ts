@@ -23,7 +23,7 @@ export const addUser = (t, user: IInsertUser) =>
     ($1, $2, $3, $4)`,
     [user.user_email, user.user_name, Utils.checkDate(user.user_birthday), user.user_picture]
   ) 
-  .catch((err) => { throw Boom.badRequest(`Error inserting user.`); })
+  .catch(() => { throw Boom.badRequest(`Error inserting user.`); })
 
 export const getUserIdByEmail = (t, email: string) =>
   t.one(`SELECT user_id FROM users WHERE user_email = $1`, email) 

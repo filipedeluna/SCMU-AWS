@@ -14,12 +14,17 @@ export const checkTimestamp = (timestamp: number) => {
 }
 
 export const errorHandler = (err, res) => {
-  if (Boom.isBoom(err))
+
+
+  if (Boom.isBoom(err)) {
+    console.error("BOOM ERROR----------------------");
     res.status(err.output.statusCode).send(err.output.payload.message);
-  else {
-    console.log(err);
+    } else {
+    console.error("SERVER ERROR--------------------");
     res.sendStatus(500);
   }
+  console.error(err);
+  console.error("---------------------------------"););
 }
 
 export const writePictureToFile = (filename: string, pictureData) => {
