@@ -18,12 +18,13 @@ export const errorHandler = (err, res) => {
 
   if (Boom.isBoom(err)) {
     console.error("BOOM ERROR----------------------");
+    console.error(err.data);
     res.status(err.output.statusCode).send(err.output.payload.message);
     } else {
     console.error("SERVER ERROR--------------------");
+    console.error(err);
     res.sendStatus(500);
   }
-  console.error(err);
   console.error("---------------------------------");
 }
 
@@ -32,10 +33,10 @@ export const writePictureToFile = (filename: string, pictureData) => {
   const buffer = Buffer.from(fixedPictureData, 'base64');
   
   return fs.writeFile(filename, buffer)
-  .catch(( )=> { throw Boom.badData('Failed to save picture.'); })
+  .catch(e => { throw Boom.badData('Failed to save picture.', { data: e }); })
 }
 
 export const readPictureFromFile = (filename: string) =>
   fs.readFile(filename /*, 'base64' */)
   //.then(data => `data:image/jpeg;base64, ${data}`)
-  .catch(()=> { throw Boom.notFound('Failed to get picture.'); })
+  .catch(e => { throw Boom.notFound('Failed to get picture.', { data: e }); })
