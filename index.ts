@@ -53,8 +53,8 @@ app.get('/users', (req, res) =>
 app.post('/users', jsonParser, (req, res) => 
   db.tx(t => 
     SV.createNewUser(t, req.body)
-    .then(data => res.send(data))
   )
+  .then(data => res.send("User created."))
   .catch((err) => Utils.errorHandler(err, res))
 )
 
@@ -80,9 +80,32 @@ app.get('/users/:userId/picture', (req, res) =>
 /*
     STAFF 
 */
+// Get all staff or specific staff
 app.get('/staff', (req, res) => 
+  db.tx(t => {
+    if (req.query.email)
+      return SV.getStaffId(t, req.query.email)
+      .then(data => res.send(data))
+    else
+      return SV.selectAllFromTable(t, DBTables.STAFF)
+  })
+  .then(data => res.send("Staff created."))
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+// Get staff info
+app.get('/staff/:staffId', (req, res) => 
   db.tx(t => 
-    SV.selectAllFromTable(t, DBTables.STAFF)
+    SV.getStaff(t, req.params.staffId)
+    .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+// Create user
+app.post('/staff', jsonParser, (req, res) => 
+  db.tx(t => 
+    SV.createNewStaff(t, req.body)
     .then(data => res.send(data))
   )
   .catch((err) => Utils.errorHandler(err, res))
