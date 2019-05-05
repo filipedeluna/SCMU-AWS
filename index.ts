@@ -124,7 +124,7 @@ app.get('/cards', (req, res) =>
 
 app.post('/cards', jsonParser, (req, res) => 
   db.tx(t => 
-    SV.addCard(t, req.body.card_id, req.body.card_id)
+    SV.addCard(t, req.body.card_id, req.body.userId)
     .then(data => res.send(data))
   )
   .catch((err) => Utils.errorHandler(err, res))
@@ -132,7 +132,7 @@ app.post('/cards', jsonParser, (req, res) =>
 
 app.get('/cards/:cardId/user', (req, res) => 
   db.tx(t => 
-    SV.getCardOwner(t, req.params.card_id)
+    SV.getCardOwner(t, req.params.cardId)
     .then(data => res.send(data))
   )
   .catch((err) => Utils.errorHandler(err, res))
@@ -140,7 +140,7 @@ app.get('/cards/:cardId/user', (req, res) =>
 
 app.get('/cards/user/:userId', (req, res) => 
   db.tx(t => 
-    SV.getUserCards(t, req.params.card_id)
+    SV.getUserCards(t, req.params.userId)
     .then(data => res.send(data))
   )
   .catch((err) => Utils.errorHandler(err, res))
