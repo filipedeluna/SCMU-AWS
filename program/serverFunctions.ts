@@ -97,4 +97,4 @@ export const getUserCards = (t, userId) =>
 export const getCardOwner = (t, cardId) =>
   Validate.cardId(cardId)
   .then(() => DB.checkTableExists(t, DBTables.CARDS))  
-  .then(() => DB.getCardsByUserId(t, cardId))
+  .then(() => DB.getCardOwnerByCardId(t, cardId))

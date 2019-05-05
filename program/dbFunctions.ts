@@ -75,6 +75,10 @@ export const getCardsByUserId = (t, userId) =>
   t.any(`SELECT card_id FROM cards WHERE user_id_ref = $1`, userId) 
   .catch(e => { throw Boom.badRequest(`Error getting user cards.`, { data: e }); })
 
+export const getCardOwnerByCardId = (t, cardId) =>
+  t.one(`SELECT user_id_ref FROM cards WHERE card_id = $1`, cardId) 
+  .catch(e => { throw Boom.badRequest(`Error getting card owner.`, { data: e }); })
+
 /*
     ENUMS 
 */ 
