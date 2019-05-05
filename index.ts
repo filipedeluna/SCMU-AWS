@@ -54,7 +54,7 @@ app.post('/users', jsonParser, (req, res) =>
   db.tx(t => 
     SV.createNewUser(t, req.body)
   )
-  .then(data => res.send("User created."))
+  .then(() => res.send("User created."))
   .catch((err) => Utils.errorHandler(err, res))
 )
 
@@ -89,7 +89,7 @@ app.get('/staff', (req, res) =>
     else
       return SV.selectAllFromTable(t, DBTables.STAFF)
   })
-  .then(data => res.send("Staff created."))
+  .then(() => res.send("Staff created."))
   .catch((err) => Utils.errorHandler(err, res))
 )
 
