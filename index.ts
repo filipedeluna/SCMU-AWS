@@ -1,25 +1,32 @@
 // Import npm libs
 import * as express from 'express';
+import * as bodyParser from 'body-parser';
 import * as pgPromise from 'pg-promise';
 import * as Promise from 'bluebird';
 import * as Boom from 'boom';
 
 // Import local files
-import { DBOptions, PGPConfig } from './program/config';
+import { 
+  DBOptions, 
+  PGPConfig 
+} from './program/config';
+
+import * as Utils from './program/utils';
+
 import { 
   DBTables,
 } from './program/dbFunctions';
 
-import {
-  selectAllFromTable
-} from './program/serverFunctions'
+import * as SV from './program/serverFunctions';
 
 // Constants
-const PORT:number = 8000
+const PORT: number = 8000
 
 const app = express()
 const pgp = pgPromise(PGPConfig);
 const db = pgp(DBOptions);
+
+const jsonParser = bodyParser.json({ limit: '1mb' });
 
 // SERVER ROUTES
 app.get('/', (req, res) => 
@@ -29,58 +36,66 @@ app.get('/', (req, res) =>
 // USERS 
 app.get('/users', (req, res) => 
   db.tx(t => 
-    selectAllFromTable(t, DBTables.USERS)
+    SV.selectAllFromTable(t, DBTables.USERS)
     .then(data => res.send(data))
   )
-  .catch(() => res.json(Boom.badRequest(`Table ${DBTables.USERS} does not exist.`)))
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+app.post('/users', jsonParser, (req, res) => 
+  db.tx(t => 
+    SV.createNewUser(t, req.body)
+    .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
 )
 
 // STAFF 
 app.get('/staff', (req, res) => 
   db.tx(t => 
-    selectAllFromTable(t, DBTables.STAFF)
+    SV.selectAllFromTable(t, DBTables.STAFF)
     .then(data => res.send(data))
   )
-  .catch(() => res.json(Boom.badRequest(`Table ${DBTables.STAFF} does not exist.`)))
+  .catch((err) => Utils.errorHandler(err, res))
 )
 
 // CARDS 
 app.get('/cards', (req, res) => 
   db.tx(t => 
-    selectAllFromTable(t, DBTables.CARDS)
+    SV.selectAllFromTable(t, DBTables.CARDS)
     .then(data => res.send(data))
   )
-  .catch(() => res.json(Boom.badRequest(`Table ${DBTables.CARDS} does not exist.`)))
+  .catch((err) => Utils.errorHandler(err, res))
 )
 
 // TICKETS 
 app.get('/tickets', (req, res) => 
   db.tx(t => 
-    selectAllFromTable(t, DBTables.TICKETS)
+    SV.selectAllFromTable(t, DBTables.TICKETS)
     .then(data => res.send(data))
   )
-  .catch(() => res.json(Boom.badRequest(`Table ${DBTables.TICKETS} does not exist.`)))
+  .catch((err) => Utils.errorHandler(err, res))
 )
 
 // EVENTS 
 app.get('/events', (req, res) => 
   db.tx(t => 
-    selectAllFromTable(t, DBTables.EVENTS)
+    SV.selectAllFromTable(t, DBTables.EVENTS)
     .then(data => res.send(data))
   )
-  .catch(() => res.json(Boom.badRequest(`Table ${DBTables.EVENTS} does not exist.`)))
+  .catch((err) => Utils.errorHandler(err, res))
 )
 
 // ENTRIES 
 app.get('/entries', (req, res) => 
   db.tx(t => 
-    selectAllFromTable(t, DBTables.ENTRIES)
+    SV.selectAllFromTable(t, DBTables.ENTRIES)
     .then(data => res.send(data))
   )
-  .catch(() => res.json(Boom.badRequest(`Table ${DBTables.ENTRIES} does not exist.`)))
+  .catch((err) => Utils.errorHandler(err, res))
 )
 
 // Start service
 app.listen(PORT, () => 
-  console.log(`Example app listening on port ${PORT}!`)
+  console.log(`SCMU APP listening on port ${PORT}!`)
 )
