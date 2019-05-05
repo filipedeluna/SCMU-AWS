@@ -102,7 +102,7 @@ app.get('/staff/:staffId', (req, res) =>
   .catch((err) => Utils.errorHandler(err, res))
 )
 
-// Create user
+// Create staff
 app.post('/staff', jsonParser, (req, res) => 
   db.tx(t => 
     SV.createNewStaff(t, req.body)

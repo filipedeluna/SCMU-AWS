@@ -50,7 +50,8 @@ export const getUserId = (t, userEmail) =>
   .then(() => DB.getUserIdByEmail(t, userEmail))
 
 export const getUserPicture = (t, userId) =>
-  DB.checkTableExists(t, DBTables.USERS)
+  Validate.id(userId)
+  .then(() => DB.checkTableExists(t, DBTables.USERS))
   .then(() => DB.getUserPicturebyId(t, userId))
   .then(res => res.user_picture)
   .then(filename => Utils.readPictureFromFile(`${PIC_FOLDER}${filename}`))
@@ -58,12 +59,14 @@ export const getUserPicture = (t, userId) =>
 /*
     STAFF 
 */
-export const getStaffId = (t, staffId) => 
-  DB.checkTableExists(t, DBTables.STAFF)
-  .then(() => DB.getStaffIdByEmail(t, staffId))
+export const getStaffId = (t, staffemail) => 
+  Validate.email(staffemail)
+  .then(() => DB.checkTableExists(t, DBTables.STAFF))
+  .then(() => DB.getStaffIdByEmail(t, staffemail))
 
 export const getStaff = (t, staffId) => 
-  DB.checkTableExists(t, DBTables.STAFF)
+  Validate.id(staffId)
+  .then(() => DB.checkTableExists(t, DBTables.STAFF))
   .then(() => DB.getStaffbyId(t, staffId))
 
 export const createNewStaff = (t, data) =>
