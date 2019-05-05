@@ -14,16 +14,14 @@ export const checkTimestamp = (timestamp: number) => {
 }
 
 export const errorHandler = (err, res) => {
-
-
   if (Boom.isBoom(err)) {
     console.error("BOOM ERROR----------------------");
-    console.error(err.data);
-    res.status(err.output.statusCode).send(err.output.payload.message);
-    } else {
+    console.error(err.output.payload.message + '\n\n' + err.data);
+    res.status(err.output.statusCode).send(err.output.payload.message + '\n\n' + err.data);
+  } else {
     console.error("SERVER ERROR--------------------");
     console.error(err);
-    res.sendStatus(500);
+    res.status(500).send(err);
   }
   console.error("---------------------------------");
 }
