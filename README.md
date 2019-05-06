@@ -1,4 +1,8 @@
 SCMU-AWS
+- Tabela ligacoes (idArduino, ipApp, ipArduino)
+- Imagem evento
+- none nos INSERTS
+- 
 
 USERS\
 GET  /users - devolve todos os users\
