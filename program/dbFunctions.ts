@@ -26,12 +26,12 @@ export const addUser = (t, user: IInsertUser) =>
   ) 
   .catch(e => { throw Boom.badRequest('Error inserting user.', { data: e }); })
 
-export const getUserIdByEmail = (t, email: string) =>
-  t.one('SELECT user_id FROM users WHERE user_email = $1', email) 
+export const getUserByEmail = (t, email: string) =>
+  t.one('SELECT user_id, user_name, user_birthday FROM users WHERE user_email = $1', email) 
   .catch(e => { throw Boom.notFound('User not found.', { data: e }) })
 
-export const getUserbyId = (t, userId: string) =>
-  t.one('SELECT user_id, user_email, user_name, user_birthday FROM users WHERE user_id = $1', userId) 
+export const getUserById = (t, userId: string) =>
+  t.one('SELECT user_email, user_name, user_birthday FROM users WHERE user_id = $1', userId) 
   .catch(e => { throw Boom.notFound('User not found.', { data: e }) })
 
 export const getUserPicturebyId = (t, userId: string) =>
@@ -43,11 +43,11 @@ export const getUserPicturebyId = (t, userId: string) =>
 */ 
 
 export const getStaffIdByEmail = (t, email: string) =>
-  t.one('SELECT staff_id FROM staff WHERE staff_email = $1', email) 
+  t.one('SELECT staff_id, staff_name, staff_password, staff_type FROM staff WHERE staff_email = $1', email) 
   .catch(e => { throw Boom.notFound('Staff not found.', { data: e }) })
 
 export const getStaffbyId = (t, staffId: string) =>
-  t.one('SELECT * FROM staff WHERE staff_id = $1', staffId) 
+  t.one('SELECT staff_email, staff_name, staff_password, staff_type FROM staff WHERE staff_id = $1', staffId) 
   .catch(e => { throw Boom.notFound('Staff not found.', { data: e }) })
 
 export const addStaff = (t, user: IInsertStaff) =>
@@ -117,11 +117,11 @@ export const addTicket = (t, cardId, eventId) =>
   .catch(e => { throw Boom.badRequest('Error adding ticket to card.', { data: e }); })
 
 export const getAllTicketsByCardId = (t, cardId) =>
-  t.any('SELECT * FROM tickets WHERE card_id_ref = $1', cardId)
+  t.any('SELECT event_id_ref, ticket_used FROM tickets WHERE card_id_ref = $1', cardId)
   .catch(e => { throw Boom.badRequest('Error getting tickets by cardId.', { data: e }); })
 
 export const getAllTicketsByEventId = (t, eventId) =>
-  t.any('SELECT * FROM tickets WHERE eventId_id_ref = $1', eventId)
+  t.any('SELECT card_id_ref, ticket_used FROM tickets WHERE eventId_id_ref = $1', eventId)
   .catch(e => { throw Boom.badRequest('Error getting tickets by eventId.', { data: e }); })
 
 export const checkTicketUsed = (t, cardId, eventId) =>
@@ -141,6 +141,16 @@ export const setTicketAsUsed = (t, cardId, eventId) =>
     [cardId, eventId])
   )
   .catch(e => { throw Boom.notFound('Error setting ticket as used.', { data: e }); })
+
+/*
+    EVENTS
+*/ 
+export const getEventById = (t, eventId) =>
+  t.one(`
+    SELECT event_name, event_description, event_date, event_tickets, event_price, event_min_age 
+    FROM events WHERE eventId = $1`, eventId
+  )
+  .catch(e => { throw Boom.notFound('Event not found.', { data: e }); })
 
 /*
     ENUMS 

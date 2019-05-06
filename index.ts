@@ -40,7 +40,7 @@ app.get('/', (req, res) =>
 app.get('/users', (req, res) => 
   db.tx(t => {
     if (req.query.email)
-      return SV.getUserId(t, req.query.email)
+      return SV.getUserByEmail(t, req.query.email)
       .then(data => res.send(data))
     else
       return SV.selectAllFromTable(t, DBTables.USERS)
@@ -58,10 +58,10 @@ app.post('/users', jsonParser, (req, res) =>
   .catch((err) => Utils.errorHandler(err, res))
 )
 
-// Get user info
+// Get by id
 app.get('/users/:userId', (req, res) => 
   db.tx(t => 
-    SV.getUser(t, req.params.userId)
+    SV.getUserById(t, req.params.userId)
     .then(data => res.send(data))
   )
   .catch((err) => Utils.errorHandler(err, res))
@@ -218,6 +218,16 @@ app.get('/events', (req, res) =>
   )
   .catch((err) => Utils.errorHandler(err, res))
 )
+
+// Get event by id
+app.get('/events/:eventId', (req, res) =>
+  db.tx(t => 
+    SV.getEventById(t, req.body.eventId)
+    .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
 
 /*
     ENTRIES 

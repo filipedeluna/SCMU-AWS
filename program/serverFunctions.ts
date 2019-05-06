@@ -41,15 +41,15 @@ export const createNewUser = (t, data) =>
     .then(() => Utils.writePictureToFile(`${PIC_FOLDER}${filename}`, data.user_picture))
   })
 
-export const getUser = (t, userId) => 
+export const getUserById = (t, userId) => 
   Validate.id(userId)
   .then(() => DB.checkTableExists(t, DBTables.USERS))
-  .then(() => DB.getUserbyId(t, userId))
+  .then(() => DB.getUserById(t, userId))
 
-export const getUserId = (t, userEmail) => 
+export const getUserByEmail = (t, userEmail) => 
   Validate.email(userEmail)
   .then(() => DB.checkTableExists(t, DBTables.USERS))
-  .then(() => DB.getUserIdByEmail(t, userEmail))
+  .then(() => DB.getUserByEmail(t, userEmail))
 
 export const getUserPicture = (t, userId) =>
   Validate.id(userId)
@@ -139,3 +139,12 @@ export const setTicketAsUsed = (t, cardId, eventId) =>
   .then(() => Validate.id(eventId))
   .then(() => DB.checkTableExists(t, DBTables.TICKETS))
   .then(() => DB.setTicketAsUsed(t, cardId, eventId))
+
+/*
+    EVENTS 
+*/
+
+export const getEventById = (t, eventId) =>
+  Validate.id(eventId)
+  .then(() => DB.checkTableExists(t, DBTables.EVENTS))
+  .then(() => DB.getEventById(t, eventId))
