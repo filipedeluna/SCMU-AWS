@@ -1,11 +1,10 @@
 SCMU-AWS
-- Tabela ligacoes (idArduino, ipApp, ipArduino)
 - Imagem evento
 - none nos INSERTS
-- ano 1900
 - verificar idade
 - verificar idade antes de inserir em evento
 - ip arduino staff
+- Tabela ligacoes (idArduino, ipApp, ipArduino)
 
 USERS\
 GET  /users - devolve todos os users\

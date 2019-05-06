@@ -17,7 +17,7 @@ export const selectAll = (t, table: DBTables) =>
 */ 
 
 export const addUser = (t, user: IInsertUser) =>
-  t.one(`
+  t.none(`
     INSERT INTO users 
     (user_email, user_name, user_birthday, user_picture)
     VALUES
@@ -51,7 +51,7 @@ export const getStaffbyId = (t, staffId: string) =>
   .catch(e => { throw Boom.notFound('Staff not found.', { data: e }) })
 
 export const addStaff = (t, user: IInsertStaff) =>
-  t.one(`
+  t.none(`
     INSERT INTO staff 
     (staff_email, staff_name, staff_password, staff_type)
     VALUES
@@ -65,7 +65,7 @@ export const addStaff = (t, user: IInsertStaff) =>
 */ 
 
 export const addCard = (t, cardId, userId) =>
-  t.one(`
+  t.none(`
     INSERT INTO cards 
     (card_id, user_id_ref)
     VALUES
@@ -107,7 +107,7 @@ export const checkTicketAlreadyBought = (t, cardId, eventId) =>
   .catch(e => { throw Boom.forbidden('Ticket already bought.', { data: e }); })
 
 export const addTicket = (t, cardId, eventId) =>
-  t.one(`
+  t.none(`
     INSERT INTO tickets 
     (card_id_ref, event_id_ref)
     VALUES
