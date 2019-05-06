@@ -2,7 +2,7 @@ SCMU-AWS
 - Tabela ligacoes (idArduino, ipApp, ipArduino)
 - Imagem evento
 - none nos INSERTS
-- 
+- ano 1900
 
 USERS\
 GET  /users - devolve todos os users\
