@@ -3,6 +3,8 @@ SCMU-AWS
 - Imagem evento
 - none nos INSERTS
 - ano 1900
+- verificar idade
+- verificar idade antes de inserir em evento
 
 USERS\
 GET  /users - devolve todos os users\
