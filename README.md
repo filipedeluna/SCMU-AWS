@@ -53,7 +53,7 @@ GET /entries - devolve todas as entries (entradas)\
 -------------------------------------------------
 
 EVENTS\
-GET /evetns - devolve todos os events\
+GET /events - devolve todos os events\
 ...
 
 -------------------------------------------------
