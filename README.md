@@ -5,6 +5,7 @@ SCMU-AWS
 - verificar idade antes de inserir em evento
 - ip arduino staff
 - Tabela ligacoes (idArduino, ipApp, ipArduino)
+- arranjar status
 
 USERS\
 GET  /users - devolve todos os users\
@@ -56,7 +57,7 @@ POST /entries - regista uma entry. enviar o json seguinte { cardId: string, even
 -------------------------------------------------
 
 EVENTS\
-GET /evetns - devolve todos os events\
+GET /events - devolve todos os events\
 ...
 
 -------------------------------------------------
