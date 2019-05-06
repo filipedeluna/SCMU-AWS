@@ -36,7 +36,7 @@ app.get('/', (req, res) =>
 /*
     USERS 
 */
-// Get all users or specific user
+// Get all users or specific user by email
 app.get('/users', (req, res) => 
   db.tx(t => {
     if (req.query.email)
@@ -80,7 +80,7 @@ app.get('/users/:userId/picture', (req, res) =>
 /*
     STAFF 
 */
-// Get all staff or specific staff
+// Get all staff or specific staff by email
 app.get('/staff', (req, res) => 
   db.tx(t => {
     if (req.query.email)
@@ -114,6 +114,7 @@ app.post('/staff', jsonParser, (req, res) =>
 /*
     CARDS 
 */ 
+// Get all cards
 app.get('/cards', (req, res) => 
   db.tx(t => 
     SV.selectAllFromTable(t, DBTables.CARDS)
@@ -122,6 +123,7 @@ app.get('/cards', (req, res) =>
   .catch((err) => Utils.errorHandler(err, res))
 )
 
+// Create card
 app.post('/cards', jsonParser, (req, res) => 
   db.tx(t => 
     SV.addCard(t, req.body.cardId, req.body.userId)
@@ -130,6 +132,7 @@ app.post('/cards', jsonParser, (req, res) =>
   .catch((err) => Utils.errorHandler(err, res))
 )
 
+// Get card owner
 app.get('/cards/:cardId/user', (req, res) => 
   db.tx(t => 
     SV.getCardOwner(t, req.params.cardId)
@@ -138,6 +141,7 @@ app.get('/cards/:cardId/user', (req, res) =>
   .catch((err) => Utils.errorHandler(err, res))
 )
 
+// Get all user cards
 app.get('/cards/user/:userId', (req, res) => 
   db.tx(t => 
     SV.getUserCards(t, req.params.userId)
@@ -149,6 +153,7 @@ app.get('/cards/user/:userId', (req, res) =>
 /*
     TICKETS 
 */
+// Get all tickets
 app.get('/tickets', (req, res) => 
   db.tx(t => 
     SV.selectAllFromTable(t, DBTables.TICKETS)
@@ -157,42 +162,55 @@ app.get('/tickets', (req, res) =>
   .catch((err) => Utils.errorHandler(err, res))
 )
 
-// create ticket for event (cant have more tickets than x)
+// Add ticket to card
 app.post('/tickets', (req, res) => 
   db.tx(t => 
-    SV.selectAllFromTable(t, DBTables.TICKETS)
-    .then(data => res.send(data))
+    SV.addTicketToCard(t, req.body.cardId, req.body.eventId)
+    .then(() => res.send('Ticket added to card.'))
   )
   .catch((err) => Utils.errorHandler(err, res))
 )
 
-// Get all tickets for card
+// Get all tickets by card id
 app.get('/tickets/card/:cardId', (req, res) => 
   db.tx(t => 
-    SV.selectAllFromTable(t, DBTables.TICKETS)
+    SV.getAllTicketsByCardId(t, req.params.cardId)
     .then(data => res.send(data))
   )
   .catch((err) => Utils.errorHandler(err, res))
 )
 
-// Get all tickets for event
+// Get all event by card id
 app.get('/tickets/event/:eventId', (req, res) => 
   db.tx(t => 
-    SV.selectAllFromTable(t, DBTables.TICKETS)
+    SV.getAllTicketsByEventId(t, req.params.eventId)
     .then(data => res.send(data))
   )
   .catch((err) => Utils.errorHandler(err, res))
 )
 
-// Get ticket by card and event
-app.get('/tickets/:cardId/:eventId', (req, res) => null)
+// Check ticket is used
+app.get('/tickets/:cardId/:eventId', (req, res) => 
+  db.tx(t => 
+    SV.checkTicketUsed(t, req.params.cardId, req.params.eventId)
+    .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
 
 // Set ticket as used
-app.patch('/tickets/:cardId/:eventId', (req, res) => null)
+app.patch('/tickets', (req, res) => 
+  db.tx(t => 
+    SV.checkTicketUsed(t, req.body.cardId, req.body.eventId)
+    .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
 
 /*
     EVENTS 
 */ 
+// Get all events
 app.get('/events', (req, res) => 
   db.tx(t => 
     SV.selectAllFromTable(t, DBTables.EVENTS)
@@ -204,6 +222,7 @@ app.get('/events', (req, res) =>
 /*
     ENTRIES 
 */ 
+// Get all entries
 app.get('/entries', (req, res) => 
   db.tx(t => 
     SV.selectAllFromTable(t, DBTables.ENTRIES)

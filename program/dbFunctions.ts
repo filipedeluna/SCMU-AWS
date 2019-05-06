@@ -4,6 +4,7 @@ import * as Boom from 'boom';
 /*
     GENERAL FUNCTIONS 
 */ 
+
 export const checkTableExists = (t, table: DBTables) =>
   t.one('SELECT * FROM information_schema.tables WHERE table_name = $1', table)
   .catch(e => { throw Boom.badRequest(`Table ${table} does not exist.`, { data: e }); })
@@ -11,12 +12,12 @@ export const checkTableExists = (t, table: DBTables) =>
 export const selectAll = (t, table: DBTables) =>
   t.any(`SELECT * FROM ${table}`) 
 
-
 /*
     USERS
 */ 
+
 export const addUser = (t, user: IInsertUser) =>
-  t.any(`
+  t.one(`
     INSERT INTO users 
     (user_email, user_name, user_birthday, user_picture)
     VALUES
@@ -27,29 +28,30 @@ export const addUser = (t, user: IInsertUser) =>
 
 export const getUserIdByEmail = (t, email: string) =>
   t.one('SELECT user_id FROM users WHERE user_email = $1', email) 
-  .catch(e => { throw Boom.notFound('Email not found.', { data: e }) })
+  .catch(e => { throw Boom.notFound('User not found.', { data: e }) })
 
 export const getUserbyId = (t, userId: string) =>
   t.one('SELECT user_id, user_email, user_name, user_birthday FROM users WHERE user_id = $1', userId) 
-  .catch(e => { throw Boom.notFound('User does not exist.', { data: e }) })
+  .catch(e => { throw Boom.notFound('User not found.', { data: e }) })
 
 export const getUserPicturebyId = (t, userId: string) =>
   t.one('SELECT user_picture FROM users WHERE user_id = $1', userId) 
-  .catch(e => { throw Boom.notFound('User does not exist.', { data: e }) })
+  .catch(e => { throw Boom.notFound('User not found.', { data: e }) })
 
 /*
     STAFF
 */ 
+
 export const getStaffIdByEmail = (t, email: string) =>
   t.one('SELECT staff_id FROM staff WHERE staff_email = $1', email) 
-  .catch(e => { throw Boom.notFound('Email not found.', { data: e }) })
+  .catch(e => { throw Boom.notFound('Staff not found.', { data: e }) })
 
 export const getStaffbyId = (t, staffId: string) =>
   t.one('SELECT * FROM staff WHERE staff_id = $1', staffId) 
-  .catch(e => { throw Boom.notFound('Staff does not exist.', { data: e }) })
+  .catch(e => { throw Boom.notFound('Staff not found.', { data: e }) })
 
 export const addStaff = (t, user: IInsertStaff) =>
-  t.any(`
+  t.one(`
     INSERT INTO staff 
     (staff_email, staff_name, staff_password, staff_type)
     VALUES
@@ -61,8 +63,9 @@ export const addStaff = (t, user: IInsertStaff) =>
 /*
     CARDS
 */ 
+
 export const addCard = (t, cardId, userId) =>
-  t.any(`
+  t.one(`
     INSERT INTO cards 
     (card_id, user_id_ref)
     VALUES
@@ -77,12 +80,13 @@ export const getCardsByUserId = (t, userId) =>
 
 export const getCardOwnerByCardId = (t, cardId) =>
   t.one('SELECT user_id_ref FROM cards WHERE card_id = $1', cardId) 
-  .catch(e => { throw Boom.notFound('Error getting card owner.', { data: e }); })
+  .catch(e => { throw Boom.notFound('Card not found.', { data: e }); })
 
 /*
     TICKETS
 */ 
-export const checkTicketsLeft = (t, cardId, eventId) =>
+
+export const checkTicketsLeft = (t, eventId) =>
   t.one(`
     SELECT 
       (SELECT COUNT(*) FROM tickets WHERE event_id_ref = $1) < 
@@ -94,27 +98,54 @@ export const checkTicketsLeft = (t, cardId, eventId) =>
     if (!res.value)
       throw Boom.forbidden('No tickets left for event.'); 
   })
-  .catch(e => { throw Boom.badRequest('Error checking tickets left for event.', { data: e });  })
+  .catch(e => { throw Boom.badRequest('Error checking tickets left for event.', { data: e }); })
 
-export const checkTicketsAlreadyBought = (t, cardId, eventId) =>
-  t.none('SELECT COUNT(*) FROM tickets WHERE event_id_ref = $1 AND card_id_ref = $2',
-    [eventId, cardId]
+export const checkTicketAlreadyBought = (t, cardId, eventId) =>
+  t.none('SELECT * FROM tickets WHERE card_id_ref = $1 AND event_id_ref = $2',
+    [cardId, eventId]
   )
-  .catch(e => { throw Boom.badRequest('Ticket already bought.', { data: e });  })
+  .catch(e => { throw Boom.forbidden('Ticket already bought.', { data: e }); })
 
 export const addTicket = (t, cardId, eventId) =>
-  t.any(`
+  t.one(`
     INSERT INTO tickets 
     (card_id_ref, event_id_ref)
     VALUES
     ($1, $2)`,
     [cardId, eventId]
   ) 
-  .catch(e => { throw Boom.badRequest('Error creating ticket.', { data: e }); })
+  .catch(e => { throw Boom.badRequest('Error adding ticket to card.', { data: e }); })
+
+export const getAllTicketsByCardId = (t, cardId) =>
+  t.any('SELECT * FROM tickets WHERE card_id_ref = $1', cardId)
+  .catch(e => { throw Boom.badRequest('Error getting tickets by cardId.', { data: e }); })
+
+export const getAllTicketsByEventId = (t, eventId) =>
+  t.any('SELECT * FROM tickets WHERE eventId_id_ref = $1', eventId)
+  .catch(e => { throw Boom.badRequest('Error getting tickets by eventId.', { data: e }); })
+
+export const checkTicketUsed = (t, cardId, eventId) =>
+  t.one('SELECT ticket_used FROM tickets WHERE cardId_id_ref = $1 AND eventId_id_ref = $2', [cardId, eventId])
+  .then(result => result.ticket_used)
+  .catch(e => { throw Boom.notFound('Ticket not found.', { data: e }); })
+
+export const setTicketAsUsed = (t, cardId, eventId) =>
+  checkTicketUsed(t, cardId, eventId)
+  .then(result => { 
+    if (result)
+      throw Boom.forbidden('Ticket was already used.');
+  })
+  .then(() => t.one(`
+    UPDATE tickets SET ticket_used = TRUE 
+    WHERE cardId_id_ref = $1 AND eventId_id_ref = $2`, 
+    [cardId, eventId])
+  )
+  .catch(e => { throw Boom.notFound('Error setting ticket as used.', { data: e }); })
 
 /*
     ENUMS 
 */ 
+
 export enum DBTables {
   USERS    = 'users',
   STAFF    = 'staff',
@@ -127,6 +158,7 @@ export enum DBTables {
 /*
     INTERFACES 
 */ 
+
 interface IInsertUser {
   user_email:    string,
   user_name:     string,

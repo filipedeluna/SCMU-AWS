@@ -16,6 +16,7 @@ const PIC_FOLDER = 'pictures/';
 /*
     GENERAL FUNCTIONS 
 */ 
+
 export const selectAllFromTable = (t, table: DBTables) => 
   DB.checkTableExists(t, table)
   .then(() => DB.selectAll(t, table))
@@ -23,6 +24,7 @@ export const selectAllFromTable = (t, table: DBTables) =>
 /*
     USERS 
 */
+
 export const createNewUser = (t, data) => 
   Validate.userCreate(data)
   .then(() => DB.checkTableExists(t, DBTables.USERS))
@@ -59,6 +61,7 @@ export const getUserPicture = (t, userId) =>
 /*
     STAFF 
 */
+
 export const getStaffId = (t, staffemail) => 
   Validate.email(staffemail)
   .then(() => DB.checkTableExists(t, DBTables.STAFF))
@@ -83,10 +86,12 @@ export const createNewStaff = (t, data) =>
 /*
     CARDS 
 */
+
 export const addCard = (t, cardId, userId) => 
   Validate.id(userId)
   .then(() => Validate.cardId(cardId))
   .then(() => DB.checkTableExists(t, DBTables.CARDS))
+  .then(() => DB.checkTableExists(t, DBTables.USERS))
   .then(() => DB.addCard(t, cardId, userId))
 
 export const getUserCards = (t, userId) => 
@@ -104,7 +109,33 @@ export const getCardOwner = (t, cardId) =>
 */
 
 export const addTicketToCard = (t, cardId, eventId) =>
-    Validate.cardId(cardId)
-    .then(() => Validate.id(eventId))
-    .then(() => DB.checkTicketsLeft(t, cardId, eventId))
-    .then(() => )
+  Validate.cardId(cardId)
+  .then(() => Validate.id(eventId))
+  .then(() => DB.checkTableExists(t, DBTables.TICKETS))
+  .then(() => DB.checkTableExists(t, DBTables.EVENTS))
+  .then(() => DB.checkTableExists(t, DBTables.CARDS))
+  .then(() => DB.checkTicketAlreadyBought(t, cardId, eventId))
+  .then(() => DB.checkTicketsLeft(t, cardId))
+  .then(() => DB.addTicket(t, cardId, eventId))
+
+export const getAllTicketsByCardId = (t, cardId) =>
+  Validate.cardId(cardId)
+  .then(() => DB.checkTableExists(t, DBTables.TICKETS))
+  .then(() => DB.getAllTicketsByCardId(t, cardId))
+
+export const getAllTicketsByEventId = (t, eventId) =>
+  Validate.id(eventId)
+  .then(() => DB.checkTableExists(t, DBTables.TICKETS))
+  .then(() => DB.getAllTicketsByEventId(t, eventId))
+
+export const checkTicketUsed = (t, cardId, eventId) =>
+  Validate.cardId(cardId)
+  .then(() => Validate.id(eventId))
+  .then(() => DB.checkTableExists(t, DBTables.TICKETS))
+  .then(() => DB.checkTicketUsed(t, cardId, eventId))
+
+export const setTicketAsUsed = (t, cardId, eventId) =>
+  Validate.cardId(cardId)
+  .then(() => Validate.id(eventId))
+  .then(() => DB.checkTableExists(t, DBTables.TICKETS))
+  .then(() => DB.setTicketAsUsed(t, cardId, eventId))

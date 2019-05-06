@@ -48,7 +48,7 @@ CREATE TABLE events (
 CREATE TABLE tickets (
     card_id_ref  INTEGER REFERENCES cards(card_id),
     event_id_ref INTEGER REFERENCES users(user_id),
-    used         BOOLEAN NOT NULL DEFAULT FALSE,
+    ticket_used  BOOLEAN NOT NULL DEFAULT FALSE,
     PRIMARY KEY (card_id_ref, event_id_ref)
 );
 
