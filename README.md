@@ -47,6 +47,10 @@ PATCH /tickets - mete um ticket a usado. enviar o json seguinte { cardId: string
 
 ENTRIES\
 GET /entries - devolve todas as entries (entradas)\
+GET /entries/card/(cardId) - devolve todas as entries de um cartao\
+GET /entries/(eventId) - devolve todas as entries de um evento\
+GET /entries/(eventId)/(cardId) - devolve todas as entries de um evento para um cartao\
+POST /entries - regista uma entry. enviar o json seguinte { cardId: string, eventId: string }\\
 ...
 
 -------------------------------------------------
@@ -56,3 +60,12 @@ GET /evetns - devolve todos os events\
 ...
 
 -------------------------------------------------
+
+// Register entry
+app.post('/entries', (req, res) => 
+  db.tx(t => 
+    SV.registerEntry(t, req.body.eventId, req.body.cardId)
+    .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)

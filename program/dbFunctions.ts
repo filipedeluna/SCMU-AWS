@@ -82,6 +82,8 @@ export const getCardOwnerByCardId = (t, cardId) =>
   t.one('SELECT user_id_ref FROM cards WHERE card_id = $1', cardId) 
   .catch(e => { throw Boom.notFound('Card not found.', { data: e }); })
 
+export const checkCardExists = (t, cardId) => getCardOwnerByCardId(t, cardId)
+
 /*
     TICKETS
 */ 
@@ -149,9 +151,54 @@ export const setTicketAsUsed = (t, cardId, eventId) =>
 export const getEventById = (t, eventId) =>
   t.one(`
     SELECT event_name, event_description, event_date, event_tickets, event_price, event_min_age 
-    FROM events WHERE eventId = $1`, eventId
+    FROM events WHERE event_id = $1`, eventId
   )
   .catch(e => { throw Boom.notFound('Event not found.', { data: e }); })
+
+export const checkEventExists = (t, eventId) => getEventById(t, eventId)
+/*
+    ENTRIES
+*/ 
+
+export const getEntriesByEventId = (t, eventId) =>
+  t.one(`
+    SELECT entry_id, card_id_ref, entry_date, entry_valid
+    FROM events WHERE event_id_ref = $1`, eventId
+  )
+  .catch(e => { throw Boom.notFound('Event not found.', { data: e }); })
+
+export const getEntriesByCardtId = (t, cardId) =>
+  t.one(`
+    SELECT entry_id, event_id_ref, entry_date, entry_valid
+    FROM events WHERE card_id_ref = $1`, cardId
+  )
+  .catch(e => { throw Boom.notFound('Event not found.', { data: e }); })
+
+export const getEntriesByEventAndCardId = (t, eventId, cardId) =>
+  t.one(`
+    SELECT entry_id, entry_date, entry_valid
+    FROM events WHERE card_id_ref = $1 AND card_id_ref = $2`, [eventId, cardId]
+  )
+  .catch(e => { throw Boom.notFound('Event not found.', { data: e }); })
+
+export const checkEntryValid = (t, eventId, cardId) =>
+  t.none(`SELECT * FROM events WHERE card_id_ref = $1 AND card_id_ref = $2`, [eventId, cardId])
+  .then(() => 
+    t.one(`SELECT * FROM tickets WHERE card_id_ref = $1 AND card_id_ref = $2 AND ticket_used IS FALSE`, 
+    [eventId, cardId])
+  )
+  .then(() => true)
+  .catch(() => false)
+
+export const addEntry = (t, cardId, eventId, status) =>
+  t.none(`
+    INSERT INTO entries 
+    (card_id_ref, event_id_ref, entry_date, entry_valid)
+    VALUES
+    ($1, $2, NOW(), $3)`,
+    [cardId, eventId, status]
+  ) 
+  .catch(e => { throw Boom.badRequest('Error registering entry.', { data: e }); })
 
 /*
     CONNECTIONS

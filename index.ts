@@ -20,7 +20,8 @@ import {
 import * as SV from './program/serverFunctions';
 
 // Constants
-const PORT: number = 8000
+const PORT: number = 8000;
+const OK: number = 200;
 
 const app = express()
 const pgp = pgPromise(PGPConfig);
@@ -29,9 +30,7 @@ const db = pgp(DBOptions);
 const jsonParser = bodyParser.json({ limit: '1mb' });
 
 // SERVER ROUTES
-app.get('/', (req, res) => 
-  res.send('Hello World!')
-)
+app.get('/', (req, res) => res.send('SCMU APP is alive!'))
 
 /*
     USERS 
@@ -202,7 +201,7 @@ app.get('/tickets/:cardId/:eventId', (req, res) =>
 app.patch('/tickets', (req, res) => 
   db.tx(t => 
     SV.checkTicketUsed(t, req.body.cardId, req.body.eventId)
-    .then(data => res.send(data))
+    .then(() => res.send('Ticket set as used.'))
   )
   .catch((err) => Utils.errorHandler(err, res))
 )
@@ -228,7 +227,6 @@ app.get('/events/:eventId', (req, res) =>
   .catch((err) => Utils.errorHandler(err, res))
 )
 
-
 /*
     ENTRIES 
 */ 
@@ -237,6 +235,47 @@ app.get('/entries', (req, res) =>
   db.tx(t => 
     SV.selectAllFromTable(t, DBTables.ENTRIES)
     .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+// Get entries by card id
+app.get('/entries/card/:cardId', (req, res) => 
+  db.tx(t => 
+    SV.getEntriesByCardId(t, req.body.cardId)
+    .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+// Get entries by event id
+app.get('/entries/:eventId', (req, res) => 
+  db.tx(t => 
+    SV.getEntriesByEventId(t, req.body.eventId)
+    .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+// Get entries by event and card id
+app.get('/entries/:eventId/:cardId', (req, res) => 
+  db.tx(t => 
+    SV.getEntriesByCardAndEventId(t, req.body.eventId, req.body.cardId)
+    .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+// Register entry
+app.post('/entries', (req, res) => 
+  db.tx(t => 
+    SV.registerEntry(t, req.body.eventId, req.body.cardId)
+    .then(entryValid => {
+      if (entryValid) 
+        res.status(OK).send('Valid entry added.')
+      else
+        res.status(201).send('Invalid entry added.')
+    })
   )
   .catch((err) => Utils.errorHandler(err, res))
 )

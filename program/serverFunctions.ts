@@ -11,7 +11,8 @@ import * as Utils from './utils';
 import * as Validate from './validations';
 
 const uuid = require('uuid/v4');
-const PIC_FOLDER = 'pictures/';
+const PIC_FOLDER_USERS = 'pictures/users';
+const PIC_FOLDER_EVENTS = 'pictures/events';
 
 /*
     GENERAL FUNCTIONS 
@@ -38,7 +39,7 @@ export const createNewUser = (t, data) =>
       user_birthday: data.user_birthday,
       user_picture:  filename,
     })
-    .then(() => Utils.writePictureToFile(`${PIC_FOLDER}${filename}`, data.user_picture))
+    .then(() => Utils.writePictureToFile(`${PIC_FOLDER_USERS}${filename}`, data.user_picture))
   })
 
 export const getUserById = (t, userId) => 
@@ -56,7 +57,7 @@ export const getUserPicture = (t, userId) =>
   .then(() => DB.checkTableExists(t, DBTables.USERS))
   .then(() => DB.getUserPicturebyId(t, userId))
   .then(res => res.user_picture)
-  .then(filename => Utils.readPictureFromFile(`${PIC_FOLDER}${filename}`))
+  .then(filename => Utils.readPictureFromFile(`${PIC_FOLDER_USERS}${filename}`))
 
 /*
     STAFF 
@@ -148,3 +149,38 @@ export const getEventById = (t, eventId) =>
   Validate.id(eventId)
   .then(() => DB.checkTableExists(t, DBTables.EVENTS))
   .then(() => DB.getEventById(t, eventId))
+
+  
+/*
+    ENTRIES 
+*/
+
+export const getEntriesByEventId = (t, eventId) =>
+  Validate.id(eventId)
+  .then(() => DB.checkTableExists(t, DBTables.ENTRIES))
+  .then(() => DB.getEventById(t, eventId))
+
+export const getEntriesByCardId = (t, cardId) =>
+  Validate.cardId(cardId)
+  .then(() => DB.checkTableExists(t, DBTables.ENTRIES))
+  .then(() => DB.getEntriesByCardtId(t, cardId))
+
+export const getEntriesByCardAndEventId = (t, eventId, cardId) =>
+  Validate.id(eventId)
+  .then(() => Validate.cardId(cardId))
+  .then(() => DB.checkTableExists(t, DBTables.CARDS))
+  .then(() => DB.checkTableExists(t, DBTables.EVENTS))
+  .then(() => DB.checkEventExists(t, eventId))
+  .then(() => DB.checkCardExists(t, cardId))
+  .then(() => DB.getEntriesByEventAndCardId(t, eventId, cardId))
+
+export const registerEntry = (t, eventId, cardId) =>
+  Validate.id(cardId)
+  .then(() => Validate.id(eventId))
+  .then(() => DB.checkTableExists(t, DBTables.EVENTS))
+  .then(() => DB.checkTableExists(t, DBTables.CARDS))
+  .then(() => DB.checkTableExists(t, DBTables.ENTRIES))
+  .then(() => DB.checkEventExists(t, eventId))
+  .then(() => DB.checkCardExists(t, cardId))
+  .then(() => DB.checkEntryValid(t, eventId, cardId))
+  .tap(status => DB.addEntry(t, eventId, cardId, status))

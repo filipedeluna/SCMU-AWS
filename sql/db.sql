@@ -29,10 +29,11 @@ CREATE TABLE staff (
 );
 
 CREATE TABLE entries (
-    entry_id    SERIAL PRIMARY KEY,
-    card_id_ref INTEGER NOT NULL REFERENCES cards(card_id),
-    entry_date  DATE NOT NULL DEFAULT CURRENT_DATE,
-    entry_valid BOOLEAN NOT NULL DEFAULT TRUE
+    entry_id     SERIAL PRIMARY KEY,
+    card_id_ref  INTEGER NOT NULL REFERENCES cards(card_id),
+    event_id_ref INTEGER NOT NULL REFERENCES events(event_id),
+    entry_date   DATE NOT NULL DEFAULT CURRENT_DATE,
+    entry_valid  BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE events (
