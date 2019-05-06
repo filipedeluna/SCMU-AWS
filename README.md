@@ -60,12 +60,3 @@ GET /evetns - devolve todos os events\
 ...
 
 -------------------------------------------------
-
-// Register entry
-app.post('/entries', (req, res) => 
-  db.tx(t => 
-    SV.registerEntry(t, req.body.eventId, req.body.cardId)
-    .then(data => res.send(data))
-  )
-  .catch((err) => Utils.errorHandler(err, res))
-)
