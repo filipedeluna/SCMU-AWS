@@ -5,6 +5,7 @@ SCMU-AWS
 - ano 1900
 - verificar idade
 - verificar idade antes de inserir em evento
+- ip arduino staff
 
 USERS\
 GET  /users - devolve todos os users\
