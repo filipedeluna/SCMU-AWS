@@ -157,6 +157,39 @@ app.get('/tickets', (req, res) =>
   .catch((err) => Utils.errorHandler(err, res))
 )
 
+// create ticket for event (cant have more tickets than x)
+app.post('/tickets', (req, res) => 
+  db.tx(t => 
+    SV.selectAllFromTable(t, DBTables.TICKETS)
+    .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+// Get all tickets for card
+app.get('/tickets/card/:cardId', (req, res) => 
+  db.tx(t => 
+    SV.selectAllFromTable(t, DBTables.TICKETS)
+    .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+// Get all tickets for event
+app.get('/tickets/event/:eventId', (req, res) => 
+  db.tx(t => 
+    SV.selectAllFromTable(t, DBTables.TICKETS)
+    .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+// Get ticket by card and event
+app.get('/tickets/:cardId/:eventId', (req, res) => null)
+
+// Set ticket as used
+app.patch('/tickets/:cardId/:eventId', (req, res) => null)
+
 /*
     EVENTS 
 */ 

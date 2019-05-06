@@ -33,7 +33,6 @@ CREATE TABLE entries (
     card_id_ref INTEGER NOT NULL REFERENCES cards(card_id),
     entry_date  DATE NOT NULL DEFAULT CURRENT_DATE,
     entry_valid BOOLEAN NOT NULL DEFAULT TRUE
-
 );
 
 CREATE TABLE events (
@@ -47,11 +46,10 @@ CREATE TABLE events (
 );
 
 CREATE TABLE tickets (
-    ticket_id    SERIAL NOT NULL,
     card_id_ref  INTEGER REFERENCES cards(card_id),
     event_id_ref INTEGER REFERENCES users(user_id),
     used         BOOLEAN NOT NULL DEFAULT FALSE,
-    PRIMARY KEY (ticket_id, card_id_ref, event_id_ref)
+    PRIMARY KEY (card_id_ref, event_id_ref)
 );
 
 -- TEST DATA

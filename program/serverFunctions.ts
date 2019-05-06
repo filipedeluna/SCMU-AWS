@@ -98,3 +98,13 @@ export const getCardOwner = (t, cardId) =>
   Validate.cardId(cardId)
   .then(() => DB.checkTableExists(t, DBTables.CARDS))  
   .then(() => DB.getCardOwnerByCardId(t, cardId))
+
+/*
+    TICKETS 
+*/
+
+export const addTicketToCard = (t, cardId, eventId) =>
+    Validate.cardId(cardId)
+    .then(() => Validate.id(eventId))
+    .then(() => DB.checkTicketsLeft(t, cardId, eventId))
+    .then(() => )
