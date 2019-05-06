@@ -1,6 +1,5 @@
 SCMU-AWS
 - Imagem evento
-- none nos INSERTS
 - verificar idade
 - verificar idade antes de inserir em evento
 - ip arduino staff
