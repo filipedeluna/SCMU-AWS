@@ -145,12 +145,17 @@ export const setTicketAsUsed = (t, cardId, eventId) =>
 /*
     EVENTS
 */ 
+
 export const getEventById = (t, eventId) =>
   t.one(`
     SELECT event_name, event_description, event_date, event_tickets, event_price, event_min_age 
     FROM events WHERE eventId = $1`, eventId
   )
   .catch(e => { throw Boom.notFound('Event not found.', { data: e }); })
+
+/*
+    CONNECTIONS
+*/ 
 
 /*
     ENUMS 
