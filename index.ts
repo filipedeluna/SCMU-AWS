@@ -88,8 +88,8 @@ app.get('/staff', (req, res) =>
       .then(data => res.send(data))
     else
       return SV.selectAllFromTable(t, DBTables.STAFF)
+      .then(data => res.send(data))
   })
-  .then(() => res.send("Staff created."))
   .catch((err) => Utils.errorHandler(err, res))
 )
 
@@ -106,7 +106,7 @@ app.get('/staff/:staffId', (req, res) =>
 app.post('/staff', jsonParser, (req, res) => 
   db.tx(t => 
     SV.createNewStaff(t, req.body)
-    .then(data => res.send(data))
+    .then(() => res.send('Staff created'))
   )
   .catch((err) => Utils.errorHandler(err, res))
 )
@@ -124,8 +124,8 @@ app.get('/cards', (req, res) =>
 
 app.post('/cards', jsonParser, (req, res) => 
   db.tx(t => 
-    SV.addCard(t, req.body.card_id, req.body.userId)
-    .then(data => res.send(data))
+    SV.addCard(t, req.body.cardId, req.body.userId)
+    .then(() => res.send('Card created'))
   )
   .catch((err) => Utils.errorHandler(err, res))
 )

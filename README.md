@@ -3,8 +3,8 @@ SCMU-AWS
 USERS\
 GET /users - devolve todos os users\
 GET /users?email=exemplo@email.com - devolve id do user com este email\
-GET /user/(idUser) - devolve informacao do user com o seguinte id\
-GET /user/(idUser)/picture - devolve imagem do user com o seguinte id\
+GET /users/(idUser) - devolve informacao do user com o seguinte id\
+GET /users/(idUser)/picture - devolve imagem do user com o seguinte id\
 POST /users - cria um user novo. enviar o json seguinte { user_email: sring, user_name: sring, user_birthday: "YYYY-MM-DD", user_picture: base64 }\
 ...
 

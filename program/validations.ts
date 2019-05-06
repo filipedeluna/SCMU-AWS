@@ -3,12 +3,12 @@ import * as Joi from '@hapi/joi';
 
 // General
 export const id = id =>
-  Joi.validate(id, Joi.number().integer().min(0))
-  .catch(result => checkResult(result, `Invalid id.`))
+  Joi.validate(id, Joi.number().integer().min(0).required())
+  .catch(result => checkResult(result, 'Invalid id.'))
 
 export const email = email =>
-  Joi.validate(email, Joi.string().email())
-  .catch(result => checkResult(result, `Invalid email.`))
+  Joi.validate(email, Joi.string().email().required())
+  .catch(result => checkResult(result, 'Invalid email.'))
 
 // Users
 const userCreateSchema = Joi.object().keys({
@@ -20,7 +20,7 @@ const userCreateSchema = Joi.object().keys({
 
 export const userCreate = user =>
   Joi.validate(user, userCreateSchema)
-  .catch(result => checkResult(result, `Invalid data for user creation.`))
+  .catch(result => checkResult(result, 'Invalid data for user creation.'))
 
 // Staff
 const staffCreateSchema = Joi.object().keys({
@@ -32,12 +32,12 @@ const staffCreateSchema = Joi.object().keys({
 
 export const staffCreate = staff =>
   Joi.validate(staff, staffCreateSchema)
-  .catch(result => checkResult(result, `Invalid data for staff creation.`))
+  .catch(result => checkResult(result, 'Invalid data for staff creation.'))
 
 // Cards
 export const cardId = cardId =>
-  Joi.validate(cardId, Joi.number().integer().min(10000000).max(99999999))
-  .catch(result => checkResult(result, `Invalid card id.`))
+  Joi.validate(cardId, Joi.number().integer().min(10000000).max(99999999).required())
+  .catch(result => checkResult(result, 'Invalid card id.'))
 
 // Utils
 const checkResult = (result, errorMessage) => {
