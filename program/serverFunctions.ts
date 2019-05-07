@@ -76,7 +76,7 @@ export const getStaffbyId = (t, staffId) =>
 export const createNewStaff = (t, data) =>
   Validate.staffCreate(data)
   .then(() => DB.checkAllTablesExist(t))
-  .then(() => DB.checkStaffDoesNotExist(t, data.staffEmail))
+  .then(() => DB.checkStaffEmailNotRegistered(t, data.staffEmail))
   .then(() => DB.addStaff(t, {
       staff_email:    data.staff_email,
       staff_name:     data.staff_name,
@@ -217,3 +217,26 @@ export const registerEntry = (t, eventId, cardId) =>
   .then(event => DB.checkUserOldEnough(t, cardId, event.event_min_age))
   .then(() => DB.checkEntryValid(t, eventId, cardId))
   .tap(status => DB.addEntry(t, eventId, cardId, status))
+
+/*
+    CONTROLLERS 
+*/
+
+export const registerController = (t, controllerId, controller_ip) =>
+  Validate.controllerId(controllerId)
+  .then(() => Validate.ip(controller_ip))
+  .then(() => DB.checkAllTablesExist(t))
+  .then(() => DB.registerController(t, controllerId, controller_ip))
+
+/*
+    CONNECTIONS 
+*/
+
+export const registerConnection = (t, staffId, staffIp, controllerId) =>
+  Validate.id(staffId)
+  .then(() => Validate.ip(staffIp))
+  .then(() => Validate.controllerId(controllerId))
+  .then(() => DB.checkAllTablesExist(t))
+  .then(() => DB.checkStaffExists(t, staffId))
+  .then(() => DB.checkControllerExists(t, controllerId))
+  .then(() => DB.registerConnection(t, staffId, staffIp, controllerId))

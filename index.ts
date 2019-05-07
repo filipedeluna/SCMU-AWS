@@ -298,6 +298,48 @@ app.post('/entries', (req, res) =>
   .catch((err) => Utils.errorHandler(err, res))
 )
 
+/*
+    CONTROLLERS
+*/ 
+// Get all controllers
+app.get('/controllers', (req, res) => 
+  db.tx(t => 
+    SV.selectAllFromTable(t, DBTables.CONTROLLERS)
+    .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+// Register controller
+app.post('/controller', (req, res) => 
+  db.tx(t => 
+    SV.registerController(t, req.body.controllerId, req.body.controllerIp)
+    .then(() => res.send("Controller registered."))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+/*
+    CONNECTIONS 
+*/ 
+// Get all connections
+app.get('/connections', (req, res) => 
+  db.tx(t => 
+    SV.selectAllFromTable(t, DBTables.CONNECTIONS)
+    .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+// Register connection
+app.post('/connections', (req, res) => 
+  db.tx(t => 
+    SV.registerConnection(t, req.body.staffId, req.body.staffIp, req.body.controllerId)
+    .then(() => res.send("Connection registered."))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
 // Start service
 app.listen(PORT, () => 
   console.log(`SCMU APP listening on port ${PORT}!`)

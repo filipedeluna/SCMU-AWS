@@ -50,7 +50,7 @@ export const getUserPicturebyId = (t, userId: string) =>
   t.one('SELECT user_picture FROM users WHERE user_id = $1', userId) 
   .catch(e => { throw Boom.notFound('User not found.', { data: e }) })
 
-export const checkUserOldEnough = (t, userId, minAge) =>
+export const checkUserOldEnough = (t, userId: string, minAge: string) =>
   t.one(`
     SELECT * FROM users WHERE user_id = $1 
     AND DATE_PART('year',AGE(user_birthday)) <= $2`, [userId, minAge]) 
@@ -84,15 +84,19 @@ export const addStaff = (t, user: IInsertStaff) =>
   .catch(e => { throw Boom.badRequest('Error inserting staff.', { data: e }); })
 
   
-export const checkStaffDoesNotExist = (t, email: string) =>
+export const checkStaffEmailNotRegistered = (t, email: string) =>
   t.none('SELECT * FROM staff WHERE staff_email = $1', email) 
   .catch(e => { throw Boom.notFound('Staff email already registered.', { data: e }) })
+
+export const checkStaffExists = (t, staffId: string) =>
+  t.one('SELECT * FROM staff WHERE staff_id = $1', staffId) 
+  .catch(e => { throw Boom.notFound('Staff does not exist.', { data: e }) })
 
 /*
     CARDS
 */ 
 
-export const addCard = (t, cardId, userId) =>
+export const addCard = (t, cardId: string, userId: string) =>
   t.none(`
     INSERT INTO cards 
     (card_id, user_id_ref)
@@ -102,21 +106,21 @@ export const addCard = (t, cardId, userId) =>
   ) 
   .catch(e => { throw Boom.badRequest('Error creating card.', { data: e }); })
 
-export const getCardsByUserId = (t, userId) =>
+export const getCardsByUserId = (t, userId: string) =>
   t.any('SELECT card_id FROM cards WHERE user_id_ref = $1', userId) 
   .catch(e => { throw Boom.badRequest('Error getting user cards.', { data: e }); })
 
-export const getCardOwnerByCardId = (t, cardId) =>
+export const getCardOwnerByCardId = (t, cardId: string) =>
   t.one('SELECT user_id_ref FROM cards WHERE card_id = $1', cardId) 
   .catch(e => { throw Boom.notFound('Card not found.', { data: e }); })
 
-export const checkCardExists = (t, cardId) => getCardOwnerByCardId(t, cardId)
+export const checkCardExists = (t, cardId: string) => getCardOwnerByCardId(t, cardId)
 
 /*
     TICKETS
 */ 
 
-export const checkTicketsLeft = (t, eventId) =>
+export const checkTicketsLeft = (t, eventId: string) =>
   t.one(`
     SELECT 
       (SELECT COUNT(*) FROM tickets WHERE event_id_ref = $1) < 
@@ -130,13 +134,13 @@ export const checkTicketsLeft = (t, eventId) =>
   })
   .catch(e => { throw Boom.badRequest('Error checking tickets left for event.', { data: e }); })
 
-export const checkTicketAlreadyBought = (t, cardId, eventId) =>
+export const checkTicketAlreadyBought = (t, cardId: string, eventId: string) =>
   t.none('SELECT * FROM tickets WHERE card_id_ref = $1 AND event_id_ref = $2',
     [cardId, eventId]
   )
   .catch(e => { throw Boom.forbidden('Ticket already bought.', { data: e }); })
 
-export const addTicket = (t, cardId, eventId) =>
+export const addTicket = (t, cardId: string, eventId: string) =>
   t.none(`
     INSERT INTO tickets 
     (card_id_ref, event_id_ref)
@@ -146,20 +150,20 @@ export const addTicket = (t, cardId, eventId) =>
   ) 
   .catch(e => { throw Boom.badRequest('Error adding ticket to card.', { data: e }); })
 
-export const getAllTicketsByCardId = (t, cardId) =>
+export const getAllTicketsByCardId = (t, cardId: string) =>
   t.any('SELECT event_id_ref, ticket_used FROM tickets WHERE card_id_ref = $1', cardId)
   .catch(e => { throw Boom.badRequest('Error getting tickets by cardId.', { data: e }); })
 
-export const getAllTicketsByEventId = (t, eventId) =>
+export const getAllTicketsByEventId = (t, eventId: string) =>
   t.any('SELECT card_id_ref, ticket_used FROM tickets WHERE eventId_id_ref = $1', eventId)
   .catch(e => { throw Boom.badRequest('Error getting tickets by eventId.', { data: e }); })
 
-export const checkTicketUsed = (t, cardId, eventId) =>
+export const checkTicketUsed = (t, cardId: string, eventId: string) =>
   t.one('SELECT ticket_used FROM tickets WHERE cardId_id_ref = $1 AND eventId_id_ref = $2', [cardId, eventId])
   .then(result => result.ticket_used)
   .catch(e => { throw Boom.notFound('Ticket not found.', { data: e }); })
 
-export const setTicketAsUsed = (t, cardId, eventId) =>
+export const setTicketAsUsed = (t, cardId: string, eventId: string) =>
   checkTicketUsed(t, cardId, eventId)
   .then(result => { 
     if (result)
@@ -176,14 +180,14 @@ export const setTicketAsUsed = (t, cardId, eventId) =>
     EVENTS
 */ 
 
-export const getEventById = (t, eventId) =>
+export const getEventById = (t, eventId: string) =>
   t.one(`
     SELECT event_name, event_description, event_date, event_tickets, event_price, event_min_age 
     FROM events WHERE event_id = $1`, eventId
   )
   .catch(e => { throw Boom.notFound('Event not found.', { data: e }); })
 
-export const checkEventExists = (t, eventId) => getEventById(t, eventId)
+export const checkEventExists = (t, eventId: string) => getEventById(t, eventId)
 
 export const addEvent = (t, event: IInsertEvent) =>
   t.none(`
@@ -205,28 +209,28 @@ export const getEventPicturebyId = (t, eventId: string) =>
     ENTRIES
 */ 
 
-export const getEntriesByEventId = (t, eventId) =>
+export const getEntriesByEventId = (t, eventId: string) =>
   t.one(`
     SELECT entry_id, card_id_ref, entry_date, entry_valid
     FROM events WHERE event_id_ref = $1`, eventId
   )
   .catch(e => { throw Boom.notFound('Event not found.', { data: e }); })
 
-export const getEntriesByCardtId = (t, cardId) =>
+export const getEntriesByCardtId = (t, cardId: string) =>
   t.one(`
     SELECT entry_id, event_id_ref, entry_date, entry_valid
     FROM events WHERE card_id_ref = $1`, cardId
   )
   .catch(e => { throw Boom.notFound('Event not found.', { data: e }); })
 
-export const getEntriesByEventAndCardId = (t, eventId, cardId) =>
+export const getEntriesByEventAndCardId = (t, eventId: string, cardId: string) =>
   t.one(`
     SELECT entry_id, entry_date, entry_valid
     FROM events WHERE card_id_ref = $1 AND card_id_ref = $2`, [eventId, cardId]
   )
   .catch(e => { throw Boom.notFound('Event not found.', { data: e }); })
 
-export const checkEntryValid = (t, eventId, cardId) =>
+export const checkEntryValid = (t, eventId: string, cardId: string) =>
   t.none(`SELECT * FROM events WHERE card_id_ref = $1 AND card_id_ref = $2`, [eventId, cardId])
   .then(() => 
     t.one(`SELECT * FROM tickets WHERE card_id_ref = $1 AND card_id_ref = $2 AND ticket_used IS FALSE`, 
@@ -235,7 +239,7 @@ export const checkEntryValid = (t, eventId, cardId) =>
   .then(() => true)
   .catch(() => false)
 
-export const addEntry = (t, cardId, eventId, status) =>
+export const addEntry = (t, cardId: string, eventId: string, status: string) =>
   t.none(`
     INSERT INTO entries 
     (card_id_ref, event_id_ref, entry_date, entry_valid)
@@ -249,25 +253,47 @@ export const addEntry = (t, cardId, eventId, status) =>
     CONTROLLERS
 */ 
 
-export const registerController = (t, controller_id, controller_ip) =>
-  deleteControllerInfo(t, controller_id)
+export const registerController = (t, controllerId: string, controllerIp: string) =>
+  deleteControllerInfo(t, controllerId)
   .then(() => t.none(`
     INSERT INTO controllers 
     (controller_id, controller_ip)
     VALUES
     ($1, $2)`,
-    [controller_id, controller_ip]
-  )
+    [controllerId, controllerIp]
+  ))
   .catch(e => { throw Boom.conflict('Failed to register controller.', { data: e }); })
 
-export const deleteControllerInfo = (t, controller_id) =>
-  t.none('DELETE FROM controllers WHERE controller_id = $1', controller_id)
-  .then('DELETE FROM connections WHERE controller_id_ref = $1', controller_id)
+export const deleteControllerInfo = (t, controllerId: string) =>
+  t.none('DELETE FROM controllers WHERE controller_id = $1', controllerId)
+  .catch(e => { throw Boom.conflict('Failed to delete controller.', { data: e }); })
+  .then('DELETE FROM connections WHERE controller_id_ref = $1', controllerId)
   .catch(e => { throw Boom.conflict('Failed to delete previous connections.', { data: e }); })
+
+
+export const checkControllerExists = (t, controllerId: string) =>
+  t.one('SELECT * FROM controllers WHERE controller_id = $1', controllerId)
+  .catch(e => { throw Boom.notFound('Controller not found.', { data: e }); })
 
 /*
     CONNECTIONS
 */ 
+
+export const registerConnection = (t, staffId: string, staffIp: string, controllerId: string) =>
+  deletePreviousConnection(t, staffId)
+  .then(() => t.none(`
+    INSERT INTO connections 
+    (staff_id, staff_ip, controller_id)
+    VALUES
+    ($1, $2, $3)`,
+    [staffId, staffIp, controllerId]
+  ))
+  .catch(e => { throw Boom.conflict('Failed to register controller.', { data: e }); })
+
+export const deletePreviousConnection = (t, staffId: string) =>
+  t.none('DELETE FROM connections WHERE staff_id_ref = $1', staffId)
+  .catch(e => { throw Boom.conflict('Failed to delete previous connection.', { data: e }); })
+
 
 /*
     ENUMS 

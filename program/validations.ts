@@ -13,6 +13,10 @@ export const email = email =>
   Joi.validate(email, Joi.string().email().required())
   .catch(result => checkResult(result, 'Invalid email.'))
 
+ export const ip = ip =>
+  Joi.validate(ip, Joi.string().ip({ version: 'ipv4', cidr: 'forbidden' }).required())
+  .catch(result => checkResult(result, 'Invalid ip address.'))
+
 // Users
 const userCreateSchema = Joi.object().keys({
   user_email:    Joi.string().email().max(30).required(),
@@ -56,6 +60,12 @@ export const eventCreate = event =>
 export const cardId = cardId =>
   Joi.validate(cardId, Joi.number().integer().min(10000000).max(99999999).required())
   .catch(result => checkResult(result, 'Invalid card id.'))
+
+  
+// Controllers
+export const controllerId = cardId =>
+Joi.validate(cardId, Joi.number().integer().min(10000).max(99999).required())
+.catch(result => checkResult(result, 'Invalid controller id.'))
 
 // Utils
 const checkResult = (result, errorMessage) => {

@@ -60,11 +60,9 @@ CREATE TABLE controllers (
 );
 
 CREATE TABLE connections (
-    controller_id_ref  INTEGER REFERENCES controllers(controller_id),
-    staff_id_ref       INTEGER REFERENCES staff(staff_id),
+    staff_id_ref       INTEGER PRIMARY KEY REFERENCES staff(staff_id),
     staff_ip           TEXT NOT NULL,
-    PRIMARY KEY (controller_id_ref, staff_id_ref)
-
+    controller_id_ref  INTEGER NOT NULL REFERENCES controllers(controller_id)
 );
 
 -- TEST DATA
