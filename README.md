@@ -1,11 +1,9 @@
 SCMU-AWS
 - Imagem evento
-- none nos INSERTS
 - verificar idade
 - verificar idade antes de inserir em evento
 - ip arduino staff
 - Tabela ligacoes (idArduino, ipApp, ipArduino)
-- arranjar status
 
 USERS\
 GET  /users - devolve todos os users\
