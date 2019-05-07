@@ -19,6 +19,8 @@ export const checkAllTablesExist = t =>
   .then(() => checkTableExists(t, DBTables.EVENTS))
   .then(() => checkTableExists(t, DBTables.TICKETS))
   .then(() => checkTableExists(t, DBTables.ENTRIES))
+  .then(() => checkTableExists(t, DBTables.CONNECTIONS))
+  .then(() => checkTableExists(t, DBTables.CONTROLLERS))
 
 /*
     USERS
@@ -244,6 +246,26 @@ export const addEntry = (t, cardId, eventId, status) =>
   .catch(e => { throw Boom.badRequest('Error registering entry.', { data: e }); })
 
 /*
+    CONTROLLERS
+*/ 
+
+export const registerController = (t, controller_id, controller_ip) =>
+  deleteControllerInfo(t, controller_id)
+  .then(() => t.none(`
+    INSERT INTO controllers 
+    (controller_id, controller_ip)
+    VALUES
+    ($1, $2)`,
+    [controller_id, controller_ip]
+  )
+  .catch(e => { throw Boom.conflict('Failed to register controller.', { data: e }); })
+
+export const deleteControllerInfo = (t, controller_id) =>
+  t.none('DELETE FROM controllers WHERE controller_id = $1', controller_id)
+  .then('DELETE FROM connections WHERE controller_id_ref = $1', controller_id)
+  .catch(e => { throw Boom.conflict('Failed to delete previous connections.', { data: e }); })
+
+/*
     CONNECTIONS
 */ 
 
@@ -252,12 +274,14 @@ export const addEntry = (t, cardId, eventId, status) =>
 */ 
 
 export enum DBTables {
-  USERS    = 'users',
-  STAFF    = 'staff',
-  CARDS    = 'cards',
-  TICKETS  = 'tickets',
-  EVENTS   = 'events',
-  ENTRIES  = 'entries'
+  USERS       = 'users',
+  STAFF       = 'staff',
+  CARDS       = 'cards',
+  TICKETS     = 'tickets',
+  EVENTS      = 'events',
+  ENTRIES     = 'entries',
+  CONNECTIONS = 'connections',
+  CONTROLLERS = 'controllers'
 }
 
 /*

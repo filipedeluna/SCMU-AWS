@@ -54,6 +54,19 @@ CREATE TABLE tickets (
     PRIMARY KEY (card_id_ref, event_id_ref)
 );
 
+CREATE TABLE controllers (
+    controller_id  INTEGER PRIMARY KEY,
+    controller_ip  TEXT NOT NULL,
+);
+
+CREATE TABLE connections (
+    controller_id_ref  INTEGER REFERENCES controllers(controller_id),
+    staff_id_ref       INTEGER REFERENCES staff(staff_id),
+    staff_ip           TEXT NOT NULL,
+    PRIMARY KEY (controller_id_ref, staff_id_ref)
+
+);
+
 -- TEST DATA
 INSERT INTO users 
 (user_id, user_email, user_name, user_birthday, user_picture)
@@ -68,7 +81,7 @@ VALUES
 INSERT INTO cards 
 (card_id, user_id_ref)
 VALUES
-(00000000, 0),
+(10000000, 0),
 (11111111 ,1),
 (22222222, 2),
 (33333333, 3),
@@ -86,8 +99,8 @@ VALUES
 INSERT INTO events 
 (event_name, event_description, event_date, event_tickets, event_price, event_min_age)
 VALUES
-('Tomorrowland',   'Festa de música electrónica.', '2019-06-07', 3000, 150, 18),
-('Festa Batatoon', 'Diversão para crianças.',      '2019-06-07', 50,   10,  8)
+('Tomorrowland',   'Festa de música electrónica.', '2020-01-07', 3000, 150, 18),
+('Festa Batatoon', 'Diversão para crianças.',      '2020-06-07', 50,   10,  8)
 ;
 
 
