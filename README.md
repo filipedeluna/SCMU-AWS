@@ -1,6 +1,4 @@
 SCMU-AWS
-- ip arduino staff
-- Tabela ligacoes (idArduino, ipApp, ipArduino)
 
 USERS\
 GET  /users - devolve todos os users\
