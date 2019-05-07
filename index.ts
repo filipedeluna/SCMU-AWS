@@ -83,7 +83,7 @@ app.get('/users/:userId/picture', (req, res) =>
 app.get('/staff', (req, res) => 
   db.tx(t => {
     if (req.query.email)
-      return SV.getStaffId(t, req.query.email)
+      return SV.getStaffByEmail(t, req.query.email)
       .then(data => res.send(data))
     else
       return SV.selectAllFromTable(t, DBTables.STAFF)
@@ -95,7 +95,7 @@ app.get('/staff', (req, res) =>
 // Get staff info
 app.get('/staff/:staffId', (req, res) => 
   db.tx(t => 
-    SV.getStaff(t, req.params.staffId)
+    SV.getStaffbyId(t, req.params.staffId)
     .then(data => res.send(data))
   )
   .catch((err) => Utils.errorHandler(err, res))
@@ -179,7 +179,7 @@ app.get('/tickets/card/:cardId', (req, res) =>
   .catch((err) => Utils.errorHandler(err, res))
 )
 
-// Get all event by card id
+// Get all tickets by eventId
 app.get('/tickets/event/:eventId', (req, res) => 
   db.tx(t => 
     SV.getAllTicketsByEventId(t, req.params.eventId)
@@ -221,7 +221,25 @@ app.get('/events', (req, res) =>
 // Get event by id
 app.get('/events/:eventId', (req, res) =>
   db.tx(t => 
-    SV.getEventById(t, req.body.eventId)
+    SV.getEventById(t, req.params.eventId)
+    .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+// Create Event
+app.post('/events', jsonParser, (req, res) => 
+  db.tx(t => 
+    SV.createNewEvent(t, req.body)
+  )
+  .then(() => res.send("User created."))
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+// Get event picture
+app.get('/events/:eventId/picture', (req, res) =>
+  db.tx(t => 
+    SV.getEventPicture(t, req.params.eventId)
     .then(data => res.send(data))
   )
   .catch((err) => Utils.errorHandler(err, res))

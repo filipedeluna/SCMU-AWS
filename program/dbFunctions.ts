@@ -54,6 +54,10 @@ export const checkUserOldEnough = (t, userId, minAge) =>
     AND DATE_PART('year',AGE(user_birthday)) <= $2`, [userId, minAge]) 
   .catch(e => { throw Boom.forbidden('User not old enough.', { data: e }) })
 
+export const checkUserDoesNotExist = (t, email: string) =>
+  t.none('SELECT * FROM users WHERE user_email = $1', email) 
+  .catch(e => { throw Boom.conflict('User email already registered.', { data: e }) })
+
 
 /*
     STAFF
@@ -76,6 +80,11 @@ export const addStaff = (t, user: IInsertStaff) =>
     [user.staff_email, user.staff_name, user.staff_password, user.staff_type]
   ) 
   .catch(e => { throw Boom.badRequest('Error inserting staff.', { data: e }); })
+
+  
+export const checkStaffDoesNotExist = (t, email: string) =>
+  t.none('SELECT * FROM staff WHERE staff_email = $1', email) 
+  .catch(e => { throw Boom.notFound('Staff email already registered.', { data: e }) })
 
 /*
     CARDS

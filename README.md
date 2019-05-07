@@ -1,7 +1,4 @@
 SCMU-AWS
-- Imagem evento
-- verificar idade
-- verificar idade antes de inserir em evento
 - ip arduino staff
 - Tabela ligacoes (idArduino, ipApp, ipArduino)
 
@@ -36,8 +33,8 @@ POST /cards - adiciona um card a um user - enviar o json seguinte { card_id, use
 TICKETS\
 GET /tickets - devolve todos os tickets\
 GET /tickets/card/(cardId) - devolve todos os tickets de um cartao\
-GET /tickets/card/(eventId) - devolve todos os tickets de um evento\
-GET /tickets/(cardId)/(eventId) - verifica se os tickets foram usados\
+GET /tickets/event/(eventId) - devolve todos os tickets de um evento\
+GET /tickets/(cardId)/(eventId) - verifica se o ticket ja foi usado\
 POST /tickets - cria um ticket novo. enviar o json seguinte { cardId: string, eventId: string }\
 PATCH /tickets - mete um ticket a usado. enviar o json seguinte { cardId: string, eventId: string }\
 ...
@@ -49,13 +46,16 @@ GET /entries - devolve todas as entries (entradas)\
 GET /entries/card/(cardId) - devolve todas as entries de um cartao\
 GET /entries/(eventId) - devolve todas as entries de um evento\
 GET /entries/(eventId)/(cardId) - devolve todas as entries de um evento para um cartao\
-POST /entries - regista uma entry. enviar o json seguinte { cardId: string, eventId: string }\\
+POST /entries - regista uma entry. enviar o json seguinte { cardId: string, eventId: string }\
 ...
 
 -------------------------------------------------
 
 EVENTS\
 GET /events - devolve todos os events\
+GET /events/(eventId) - devolve evento com o id\
+GET /events/(eventId)/picture - devolve foto do evento com id\
+POST /events - cria um evento. enviar o json seguinte { event_name: string, event_description: string, event_date: 'YYYY-MM-DD', event_tickets: string, event_price: string, event_min_age: string, event_picture: fotoBase64 }\
 ...
 
 -------------------------------------------------
