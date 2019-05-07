@@ -39,6 +39,15 @@ PATCH /tickets - mete um ticket a usado. enviar o json seguinte { cardId: string
 
 -------------------------------------------------
 
+EVENTS\
+GET /events - devolve todos os events\
+GET /events/(eventId) - devolve evento com o id\
+GET /events/(eventId)/picture - devolve foto do evento com id\
+POST /events - cria um evento. enviar o json seguinte { event_name: string, event_description: string, event_date: 'YYYY-MM-DD', event_tickets: string, event_price: string, event_min_age: string, event_picture: fotoBase64 }\
+...
+
+-------------------------------------------------
+
 ENTRIES\
 GET /entries - devolve todas as entries (entradas)\
 GET /entries/card/(cardId) - devolve todas as entries de um cartao\
@@ -49,11 +58,16 @@ POST /entries - regista uma entry. enviar o json seguinte { cardId: string, even
 
 -------------------------------------------------
 
-EVENTS\
-GET /events - devolve todos os events\
-GET /events/(eventId) - devolve evento com o id\
-GET /events/(eventId)/picture - devolve foto do evento com id\
-POST /events - cria um evento. enviar o json seguinte { event_name: string, event_description: string, event_date: 'YYYY-MM-DD', event_tickets: string, event_price: string, event_min_age: string, event_picture: fotoBase64 }\
+CONTROLLERS\
+GET /controllers - devolve todos os controladores\
+POST /controllers - regista um controlador. enviar o json seguinte { controllerId: string, controllerIp: string }\
+...
+
+-------------------------------------------------
+
+CONNECTIONS\
+GET /connections - devolve todos as conexoes\
+POST /connections - regista uma conexao. enviar o json seguinte { staffId: string, staffIp: string, staffIp: controllerId }\
 ...
 
 -------------------------------------------------

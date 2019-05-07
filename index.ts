@@ -311,7 +311,7 @@ app.get('/controllers', (req, res) =>
 )
 
 // Register controller
-app.post('/controller', (req, res) => 
+app.post('/controllers', (req, res) => 
   db.tx(t => 
     SV.registerController(t, req.body.controllerId, req.body.controllerIp)
     .then(() => res.send("Controller registered."))
