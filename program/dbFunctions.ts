@@ -5,12 +5,20 @@ import * as Boom from 'boom';
     GENERAL FUNCTIONS 
 */ 
 
-export const checkTableExists = (t, table: DBTables) =>
+const checkTableExists = (t, table: DBTables) =>
   t.one('SELECT * FROM information_schema.tables WHERE table_name = $1', table)
   .catch(e => { throw Boom.badRequest(`Table ${table} does not exist.`, { data: e }); })
 
 export const selectAll = (t, table: DBTables) =>
   t.any(`SELECT * FROM ${table}`) 
+
+export const checkAllTablesExist = t =>
+  checkTableExists(t, DBTables.USERS)
+  .then(() => checkTableExists(t, DBTables.CARDS))
+  .then(() => checkTableExists(t, DBTables.STAFF))
+  .then(() => checkTableExists(t, DBTables.EVENTS))
+  .then(() => checkTableExists(t, DBTables.TICKETS))
+  .then(() => checkTableExists(t, DBTables.ENTRIES))
 
 /*
     USERS
@@ -34,15 +42,24 @@ export const getUserById = (t, userId: string) =>
   t.one('SELECT user_email, user_name, user_birthday FROM users WHERE user_id = $1', userId) 
   .catch(e => { throw Boom.notFound('User not found.', { data: e }) })
 
+export const checkUserExists = (t, userId: string) => getUserById(t, userId)
+
 export const getUserPicturebyId = (t, userId: string) =>
   t.one('SELECT user_picture FROM users WHERE user_id = $1', userId) 
   .catch(e => { throw Boom.notFound('User not found.', { data: e }) })
+
+export const checkUserOldEnough = (t, userId, minAge) =>
+  t.one(`
+    SELECT * FROM users WHERE user_id = $1 
+    AND DATE_PART('year',AGE(user_birthday)) <= $2`, [userId, minAge]) 
+  .catch(e => { throw Boom.forbidden('User not old enough.', { data: e }) })
+
 
 /*
     STAFF
 */ 
 
-export const getStaffIdByEmail = (t, email: string) =>
+export const getStaffByEmail = (t, email: string) =>
   t.one('SELECT staff_id, staff_name, staff_password, staff_type FROM staff WHERE staff_email = $1', email) 
   .catch(e => { throw Boom.notFound('Staff not found.', { data: e }) })
 
@@ -156,6 +173,23 @@ export const getEventById = (t, eventId) =>
   .catch(e => { throw Boom.notFound('Event not found.', { data: e }); })
 
 export const checkEventExists = (t, eventId) => getEventById(t, eventId)
+
+export const addEvent = (t, event: IInsertEvent) =>
+  t.none(`
+    INSERT INTO events 
+    (event_name, event_description, event_date, 
+      event_tickets, event_price, event_min_age)
+    VALUES
+    ($1, $2, $3, $4, $5, $6)`,
+    [event.event_name, event.event_description, event.event_date,
+      event.event_tickets, event.event_price, event.event_min_age]
+  ) 
+  .catch(e => { throw Boom.badRequest('Error registering entry.', { data: e }); })
+
+export const getEventPicturebyId = (t, eventId: string) =>
+  t.one('SELECT event_picture FROM users WHERE event_id = $1', eventId) 
+  .catch(e => { throw Boom.notFound('Event not found.', { data: e }) })
+
 /*
     ENTRIES
 */ 
@@ -226,11 +260,21 @@ interface IInsertUser {
   user_name:     string,
   user_birthday: string,
   user_picture:  string
-}
+} 
 
 interface IInsertStaff {
   staff_email:    string,
   staff_name:     string,
   staff_password: string,
   staff_type:     string
+}
+
+interface IInsertEvent {
+  event_name:        string,
+  event_description: string,
+  event_date:        string,
+  event_tickets:     string
+  event_price:       string
+  event_min_age:     string
+  event_picture:     string
 }

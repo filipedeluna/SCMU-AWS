@@ -43,7 +43,8 @@ CREATE TABLE events (
     event_date        DATE NOT NULL,
     event_tickets     INTEGER NOT NULL,
     event_price       NUMERIC NOT NULL,
-    event_min_age     INTEGER NOT NULL
+    event_min_age     INTEGER NOT NULL,
+    event_picture     TEXT NOT NULL
 );
 
 CREATE TABLE tickets (
