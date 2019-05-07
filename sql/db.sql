@@ -1,10 +1,12 @@
 -- DROP TABLES
-DROP TABLE staff;
 DROP TABLE entries;
 DROP TABLE events;
 DROP TABLE tickets;
 DROP TABLE cards;
 DROP TABLE users;
+DROP TABLE connections;
+DROP TABLE controllers;
+DROP TABLE staff;
 
 -- CREATE TABLES
 CREATE TABLE users (
@@ -28,14 +30,6 @@ CREATE TABLE staff (
     staff_type     INTEGER NOT NULL DEFAULT 0
 );
 
-CREATE TABLE entries (
-    entry_id     SERIAL PRIMARY KEY,
-    card_id_ref  INTEGER NOT NULL REFERENCES cards(card_id),
-    event_id_ref INTEGER NOT NULL REFERENCES events(event_id),
-    entry_date   DATE NOT NULL DEFAULT CURRENT_DATE,
-    entry_valid  BOOLEAN NOT NULL DEFAULT TRUE
-);
-
 CREATE TABLE events (
     event_id          SERIAL PRIMARY KEY,
     event_name        TEXT NOT NULL,
@@ -47,6 +41,14 @@ CREATE TABLE events (
     event_picture     TEXT NOT NULL
 );
 
+CREATE TABLE entries (
+    entry_id     SERIAL PRIMARY KEY,
+    card_id_ref  INTEGER NOT NULL REFERENCES cards(card_id),
+    event_id_ref INTEGER NOT NULL REFERENCES events(event_id),
+    entry_date   DATE NOT NULL DEFAULT CURRENT_DATE,
+    entry_valid  BOOLEAN NOT NULL DEFAULT TRUE
+);
+
 CREATE TABLE tickets (
     card_id_ref  INTEGER REFERENCES cards(card_id),
     event_id_ref INTEGER REFERENCES users(user_id),
@@ -56,7 +58,7 @@ CREATE TABLE tickets (
 
 CREATE TABLE controllers (
     controller_id  INTEGER PRIMARY KEY,
-    controller_ip  TEXT NOT NULL,
+    controller_ip  TEXT NOT NULL
 );
 
 CREATE TABLE connections (
@@ -95,10 +97,10 @@ VALUES
 ; 
 
 INSERT INTO events 
-(event_name, event_description, event_date, event_tickets, event_price, event_min_age)
+(event_name, event_description, event_date, event_tickets, event_price, event_min_age, event_picture)
 VALUES
-('Tomorrowland',   'Festa de música electrónica.', '2020-01-07', 3000, 150, 18),
-('Festa Batatoon', 'Diversão para crianças.',      '2020-06-07', 50,   10,  8)
+('Tomorrowland',   'Festa de música electrónica.', '2020-01-07', 3000, 150, 18, 'tomorrowland.jpg'),
+('Festa Batatoon', 'Diversão para crianças.',      '2020-06-07', 50,   10,  8, 'batatoon.jpg')
 ;
 
 

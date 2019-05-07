@@ -1,9 +1,6 @@
 import * as Boom from 'boom';
 import * as Joi from '@hapi/joi';
 
-const LETTERS_RGX = /^([a-zA-ZùÙüÜäàáëèéïìíöòóüùúÄÀÁËÈÉÏÌÍÖÒÓÜÚñÑõãéèç\s]+)$/;
-const TEXT_RGX = /^([a-zA-ZùÙüÜäàáëèéïìíöòóüùúÄÀÁËÈÉÏÌÍÖÒÓÜÚñÑõãéèç-,.\s]+)$/;
-
 // General
 export const id = id =>
   Joi.validate(id, Joi.number().integer().min(0).required())
@@ -20,7 +17,7 @@ export const email = email =>
 // Users
 const userCreateSchema = Joi.object().keys({
   user_email:    Joi.string().email().max(30).required(),
-  user_name:     Joi.string().min(3).max(30).regex(LETTERS_RGX).required(),
+  user_name:     Joi.string().min(3).max(30).required(),
   user_birthday: Joi.date().iso().min('1900-01-01').max('now').required(),
   user_picture:  Joi.string().base64({ paddingRequired: false }).required(),
 });
@@ -32,7 +29,7 @@ export const userCreate = user =>
 // Staff
 const staffCreateSchema = Joi.object().keys({
   staff_email:    Joi.string().email().max(30).required(),
-  staff_name:     Joi.string().min(3).max(30).regex(LETTERS_RGX).required(),
+  staff_name:     Joi.string().min(3).max(30).required(),
   staff_password: Joi.string().min(3).max(20).required(),
   staff_type:     Joi.number().integer().min(0).max(2).required(),
 });
@@ -43,8 +40,8 @@ export const staffCreate = staff =>
 
 // Events
 const eventCreateSchema = Joi.object().keys({
-  event_name:        Joi.string().min(3).max(40).regex(LETTERS_RGX).required(),
-  event_description: Joi.string().min(0).max(200).regex(TEXT_RGX).required(),
+  event_name:        Joi.string().min(3).max(40).required(),
+  event_description: Joi.string().min(0).max(200).required(),
   event_date:        Joi.date().iso().min('now').required(),
   event_tickets:     Joi.number().integer().min(1).max(999999).required(),
   event_price:       Joi.number().min(0).max(999999).required(),
