@@ -238,10 +238,11 @@ app.post('/events', jsonParser, (req, res) =>
 
 // Get event picture
 app.get('/events/:eventId/picture', (req, res) =>
-  db.tx(t => 
-    SV.getEventPicture(t, req.params.eventId)
+  db.tx(t => {    
+    res.type('jpg');
+    return SV.getEventPicture(t, req.params.eventId)
     .then(data => res.send(data))
-  )
+  })
   .catch((err) => Utils.errorHandler(err, res))
 )
 
