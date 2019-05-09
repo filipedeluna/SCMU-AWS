@@ -202,7 +202,7 @@ export const addEvent = (t, event: IInsertEvent) =>
   .catch(e => { throw Boom.badRequest('Error registering entry.', { data: e }); })
 
 export const getEventPicturebyId = (t, eventId: string) =>
-  t.one('SELECT event_picture FROM users WHERE event_id = $1', eventId) 
+  t.one('SELECT event_picture FROM events WHERE event_id = $1', eventId) 
   .catch(e => { throw Boom.notFound('Event not found.', { data: e }) })
 
 /*
