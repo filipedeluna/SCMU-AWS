@@ -11,8 +11,8 @@ import * as Utils from './utils';
 import * as Validate from './validations';
 
 const uuid = require('uuid/v4');
-const PIC_FOLDER_USERS = 'pictures/users';
-const PIC_FOLDER_EVENTS = 'pictures/events';
+const PIC_FOLDER_USERS = 'pictures/users/';
+const PIC_FOLDER_EVENTS = 'pictures/events/';
 
 /*
     GENERAL FUNCTIONS 
