@@ -183,7 +183,7 @@ export const getEventPicture = (t, eventId) =>
   Validate.id(eventId)
   .then(() => DB.checkAllTablesExist(t))
   .then(() => DB.getEventPicturebyId(t, eventId))
-  .then(res => Utils.readPictureFromFile(`${PIC_FOLDER_EVENTS}${res.user_picture}`))
+  .then(res => Utils.readPictureFromFile(`${PIC_FOLDER_EVENTS}${res.event_picture}`))
   
 /*
     ENTRIES 
