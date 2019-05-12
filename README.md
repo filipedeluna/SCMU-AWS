@@ -1,7 +1,5 @@
 SCMU-AWS
 
--Rota para saber os tickets left de um evento
-
 USERS\
 GET  /users - devolve todos os users\
 GET  /users?email=exemplo@email.com - devolve id do user com este email\
