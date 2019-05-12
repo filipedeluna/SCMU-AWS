@@ -246,9 +246,19 @@ app.get('/events/:eventId/picture', (req, res) =>
   .catch((err) => Utils.errorHandler(err, res))
 )
 
+// Get tickets left for event
+app.get('/events/:eventId/tickets', (req, res) => 
+  db.tx(t => 
+    SV.getEventTicketsLeft(t, req.params.eventId)
+  )
+  .then(data => res.send(data))
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
 /*
     ENTRIES 
 */ 
+
 // Get all entries
 app.get('/entries', (req, res) => 
   db.tx(t => 

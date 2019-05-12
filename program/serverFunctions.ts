@@ -185,6 +185,12 @@ export const getEventPicture = (t, eventId) =>
   .then(() => DB.getEventPicturebyId(t, eventId))
   .then(res => Utils.readPictureFromFile(`${PIC_FOLDER_EVENTS}${res.event_picture}`))
   
+export const getEventTicketsLeft = (t, eventId) =>
+  Validate.id(eventId)
+  .then(() => DB.checkAllTablesExist(t))
+  .then(() => DB.checkEventExists(t, eventId))
+  .then(() => DB.getEventTicketsLeft(t, eventId))
+
 /*
     ENTRIES 
 */

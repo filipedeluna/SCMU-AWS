@@ -45,6 +45,7 @@ EVENTS\
 GET /events - devolve todos os events\
 GET /events/(eventId) - devolve evento com o id\
 GET /events/(eventId)/picture - devolve foto do evento com id\
+GET /events/(eventId)/tickets - devolve bilhetes disponiveis para um evento\
 POST /events - cria um evento. enviar o json seguinte { event_name: string, event_description: string, event_date: 'YYYY-MM-DD', event_tickets: string, event_price: string, event_min_age: string, event_picture: fotoBase64 }\
 ...
 

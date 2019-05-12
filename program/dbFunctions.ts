@@ -124,7 +124,7 @@ export const checkTicketsLeft = (t, eventId: string) =>
   t.one(`
     SELECT 
       (SELECT COUNT(*) FROM tickets WHERE event_id_ref = $1) < 
-      (SELECT event_tickets FROM events WHERE event_id_ref = $1)
+      (SELECT event_tickets FROM events WHERE event_id = $1)
     AS value`,
     [eventId]
   )
@@ -204,6 +204,14 @@ export const addEvent = (t, event: IInsertEvent) =>
 export const getEventPicturebyId = (t, eventId: string) =>
   t.one('SELECT event_picture FROM events WHERE event_id = $1', eventId) 
   .catch(e => { throw Boom.notFound('Event not found.', { data: e }) })
+
+export const getEventTicketsLeft = (t, eventId: string) => 
+  t.one(`SELECT
+    (SELECT event_tickets FROM events WHERE event_id = $1) -
+    (SELECT COUNT(*) FROM tickets WHERE event_id_ref = $1)
+    AS value`, eventId) 
+  .then(res => res.value)
+  .catch(e => { throw Boom.notFound('Error getting event tickets left.', { data: e }) })
 
 /*
     ENTRIES
