@@ -162,7 +162,7 @@ app.get('/tickets', (req, res) =>
 )
 
 // Add ticket to card
-app.post('/tickets', (req, res) => 
+app.post('/tickets/buy', (req, res) => 
   db.tx(t => 
     SV.addTicketToCard(t, req.body.cardId, req.body.eventId)
     .then(() => res.send('Ticket added to card.'))
@@ -188,20 +188,17 @@ app.get('/tickets/event/:eventId', (req, res) =>
   .catch((err) => Utils.errorHandler(err, res))
 )
 
-// Check ticket is used
-app.get('/tickets/:cardId/:eventId', (req, res) => 
+// Check ticket is used, use it and create an entry
+app.post('/tickets/use', (req, res) => 
   db.tx(t => 
-    SV.checkTicketUsed(t, req.params.cardId, req.params.eventId)
+    SV.useTicket(t, req.body.cardId, req.body.eventId)
+    .then(entryValid => {
+      if (entryValid) 
+        res.status(OK).send('Valid entry added.')
+      else
+        res.status(201).send('Invalid entry added.')
+    })
     .then(data => res.send(data))
-  )
-  .catch((err) => Utils.errorHandler(err, res))
-)
-
-// Set ticket as used
-app.patch('/tickets', (req, res) => 
-  db.tx(t => 
-    SV.checkTicketUsed(t, req.body.cardId, req.body.eventId)
-    .then(() => res.send('Ticket set as used.'))
   )
   .catch((err) => Utils.errorHandler(err, res))
 )

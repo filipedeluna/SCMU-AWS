@@ -161,6 +161,7 @@ export const getAllTicketsByEventId = (t, eventId: string) =>
 export const checkTicketUsed = (t, cardId: string, eventId: string) =>
   t.one('SELECT ticket_used FROM tickets WHERE cardId_id_ref = $1 AND eventId_id_ref = $2', [cardId, eventId])
   .then(result => result.ticket_used)
+  .then(result => result == 'true' || result == 'TRUE' ? true : false)
   .catch(e => { throw Boom.notFound('Ticket not found.', { data: e }); })
 
 export const setTicketAsUsed = (t, cardId: string, eventId: string) =>
@@ -220,26 +221,26 @@ export const getEventTicketsLeft = (t, eventId: string) =>
 export const getEntriesByEventId = (t, eventId: string) =>
   t.one(`
     SELECT entry_id, card_id_ref, entry_date, entry_valid
-    FROM events WHERE event_id_ref = $1`, eventId
+    FROM entries WHERE event_id_ref = $1`, eventId
   )
   .catch(e => { throw Boom.notFound('Event not found.', { data: e }); })
 
-export const getEntriesByCardtId = (t, cardId: string) =>
+export const getEntriesByCardId = (t, cardId: string) =>
   t.one(`
     SELECT entry_id, event_id_ref, entry_date, entry_valid
-    FROM events WHERE card_id_ref = $1`, cardId
+    FROM entries WHERE card_id_ref = $1`, cardId
   )
   .catch(e => { throw Boom.notFound('Event not found.', { data: e }); })
 
 export const getEntriesByEventAndCardId = (t, eventId: string, cardId: string) =>
   t.one(`
     SELECT entry_id, entry_date, entry_valid
-    FROM events WHERE card_id_ref = $1 AND card_id_ref = $2`, [eventId, cardId]
+    FROM entries WHERE event_id_ref = $1 AND card_id_ref = $2`, [eventId, cardId]
   )
   .catch(e => { throw Boom.notFound('Event not found.', { data: e }); })
 
 export const checkEntryValid = (t, eventId: string, cardId: string) =>
-  t.none(`SELECT * FROM events WHERE card_id_ref = $1 AND card_id_ref = $2`, [eventId, cardId])
+  t.none(`SELECT * FROM entries WHERE event_id_ref = $1 AND card_id_ref = $2`, [eventId, cardId])
   .then(() => 
     t.one(`SELECT * FROM tickets WHERE card_id_ref = $1 AND card_id_ref = $2 AND ticket_used IS FALSE`, 
     [eventId, cardId])

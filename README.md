@@ -33,7 +33,8 @@ GET /tickets - devolve todos os tickets\
 GET /tickets/card/(cardId) - devolve todos os tickets de um cartao\
 GET /tickets/event/(eventId) - devolve todos os tickets de um evento\
 GET /tickets/(cardId)/(eventId) - verifica se o ticket ja foi usado\
-POST /tickets - cria um ticket novo. enviar o json seguinte { cardId: string, eventId: string }\
+POST /tickets/buy - cria um ticket novo. enviar o json seguinte { cardId: string, eventId: string }\
+POST /tickets/use - verifica se o ticket ja foi usado, se nao, usa, e regista a entrada { cardId: string, eventId: string }\
 PATCH /tickets - mete um ticket a usado. enviar o json seguinte { cardId: string, eventId: string }\
 ...
 

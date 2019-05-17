@@ -135,13 +135,19 @@ export const getAllTicketsByEventId = (t, eventId) =>
   .then(() => DB.checkEventExists(t, eventId))
   .then(() => DB.getAllTicketsByEventId(t, eventId))
 
-export const checkTicketUsed = (t, cardId, eventId) =>
+export const useTicket = (t, cardId, eventId) =>
   Validate.cardId(cardId)
   .then(() => Validate.id(eventId))
   .then(() => DB.checkAllTablesExist(t))
   .then(() => DB.checkCardExists(t, cardId))
   .then(() => DB.checkEventExists(t, eventId))
-  .then(() => DB.checkTicketUsed(t, cardId, eventId))
+  .then(() => DB.checkEntryValid(t, cardId, eventId))
+  .tap(valid => {
+    if (valid)
+      return DB.setTicketAsUsed(t, cardId, eventId)
+  })
+  .then(valid => valid ? "TRUE" : "FALSE")
+  .then(valid => DB.addEntry(t, eventId, cardId, valid))
 
 export const setTicketAsUsed = (t, cardId, eventId) =>
   Validate.cardId(cardId)
@@ -204,7 +210,7 @@ export const getEntriesByCardId = (t, cardId) =>
   Validate.cardId(cardId)
   .then(() => DB.checkAllTablesExist(t))
   .then(() => DB.checkCardExists(t, cardId))
-  .then(() => DB.getEntriesByCardtId(t, cardId))
+  .then(() => DB.getEntriesByCardId(t, cardId))
 
 export const getEntriesByCardAndEventId = (t, eventId, cardId) =>
   Validate.id(eventId)
