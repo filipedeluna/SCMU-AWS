@@ -146,8 +146,12 @@ export const useTicket = (t, cardId, eventId) =>
     if (valid)
       return DB.setTicketAsUsed(t, cardId, eventId)
   })
-  .then(valid => valid ? "TRUE" : "FALSE")
-  .then(valid => DB.addEntry(t, eventId, cardId, valid))
+  .tap(valid => {
+    if (valid)
+      return DB.addEntry(t, eventId, cardId, "TRUE")
+    else
+      return DB.addEntry(t, eventId, cardId, "FALSE")
+  })
 
 export const setTicketAsUsed = (t, cardId, eventId) =>
   Validate.cardId(cardId)
