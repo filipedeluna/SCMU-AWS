@@ -238,11 +238,11 @@ export const registerEntry = (t, eventId, cardId) =>
     CONTROLLERS 
 */
 
-export const registerController = (t, controllerId, controller_ip) =>
+export const registerController = (t, controllerId, controllerIp) =>
   Validate.controllerId(controllerId)
-  .then(() => Validate.ip(controller_ip))
+  .then(() => Validate.ip(controllerIp))
   .then(() => DB.checkAllTablesExist(t))
-  .then(() => DB.registerController(t, controllerId, controller_ip))
+  .then(() => DB.registerController(t, controllerId, controllerIp))
 
 /*
     CONNECTIONS 

@@ -162,7 +162,7 @@ app.get('/tickets', (req, res) =>
 )
 
 // Add ticket to card
-app.post('/tickets/buy', (req, res) => 
+app.post('/tickets/buy', jsonParser, (req, res) => 
   db.tx(t => 
     SV.addTicketToCard(t, req.body.cardId, req.body.eventId)
     .then(() => res.send('Ticket added to card.'))
@@ -189,7 +189,7 @@ app.get('/tickets/event/:eventId', (req, res) =>
 )
 
 // Check ticket is used, use it and create an entry
-app.post('/tickets/use', (req, res) => 
+app.post('/tickets/use', jsonParser, (req, res) => 
   db.tx(t => 
     SV.useTicket(t, req.body.cardId, req.body.eventId)
     .then(entryValid => {
@@ -293,7 +293,7 @@ app.get('/entries/:eventId/:cardId', (req, res) =>
 )
 
 // Register entry
-app.post('/entries', (req, res) => 
+app.post('/entries', jsonParser, (req, res) => 
   db.tx(t => 
     SV.registerEntry(t, req.body.eventId, req.body.cardId)
     .then(entryValid => {
@@ -319,7 +319,7 @@ app.get('/controllers', (req, res) =>
 )
 
 // Register controller
-app.post('/controllers', (req, res) => 
+app.post('/controllers', jsonParser, (req, res) => 
   db.tx(t => 
     SV.registerController(t, req.body.controllerId, req.body.controllerIp)
     .then(() => res.send("Controller registered."))
@@ -340,7 +340,7 @@ app.get('/connections', (req, res) =>
 )
 
 // Register connection
-app.post('/connections', (req, res) => 
+app.post('/connections', jsonParser, (req, res) => 
   db.tx(t => 
     SV.registerConnection(t, req.body.staffId, req.body.staffIp, req.body.controllerId)
     .then(() => res.send("Connection registered."))
