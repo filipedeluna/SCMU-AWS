@@ -76,7 +76,7 @@ export const getStaffbyId = (t, staffId) =>
 export const createNewStaff = (t, data) =>
   Validate.staffCreate(data)
   .then(() => DB.checkAllTablesExist(t))
-  .then(() => DB.checkStaffEmailNotRegistered(t, data.staffEmail))
+  .then(() => DB.checkStaffEmailNotRegistered(t, data.staff_email))
   .then(() => DB.addStaff(t, {
       staff_email:    data.staff_email,
       staff_name:     data.staff_name,

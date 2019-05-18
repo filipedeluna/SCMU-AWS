@@ -86,7 +86,7 @@ export const addStaff = (t, user: IInsertStaff) =>
   
 export const checkStaffEmailNotRegistered = (t, email: string) =>
   t.none('SELECT * FROM staff WHERE staff_email = $1', email) 
-  .catch(e => { throw Boom.notFound('Staff email already registered.', { data: e }) })
+  .catch(e => { throw Boom.conflict('Staff email already registered.', { data: e }) })
 
 export const checkStaffExists = (t, staffId: string) =>
   t.one('SELECT * FROM staff WHERE staff_id = $1', staffId) 
