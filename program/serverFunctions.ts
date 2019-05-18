@@ -141,6 +141,7 @@ export const useTicket = (t, cardId, eventId) =>
   .then(() => DB.checkAllTablesExist(t))
   .then(() => DB.checkCardExists(t, cardId))
   .then(() => DB.checkEventExists(t, eventId))
+  .then(event => DB.checkUserOldEnough(t, cardId, event.event_min_age))
   .then(() => DB.checkEntryValid(t, cardId, eventId))
   .tap(valid => {
     if (valid)
