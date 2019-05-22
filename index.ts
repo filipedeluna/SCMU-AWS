@@ -338,10 +338,10 @@ app.get('/messages', (req, res) =>
       .then(data => res.send(data))
     else 
       if (req.query.type)
-        SV.selectAllFromTable(t, req.query.type)
+        SV.getAllMessages(t, req.query.type)
         .then(data => res.send(data))
       else
-        SV.selectAllFromTable(t, req.query.type)
+        SV.selectAllFromTable(t, DBTables.MESSAGES)
         .then(data => res.send(data))
   })
   .catch((err) => Utils.errorHandler(err, res))
