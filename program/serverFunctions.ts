@@ -29,35 +29,31 @@ export const selectAllFromTable = (t, table: DBTables) =>
 export const createNewUser = (t, data) => 
   Validate.userCreate(data)
   .then(() => DB.checkAllTablesExist(t))
-  .then(() => DB.checkUserDoesNotExist(t, data.user_email))
+  .then(() => DB.checkUserDoesNotExist(t, data.userEmail))
   .then(() => uuid())
   .then(uuid => {
     let filename: string = `${uuid}.jpg`;
       
     return DB.addUser(t, {
-      user_email:    data.user_email,
-      user_name:     data.user_name,
-      user_birthday: data.user_birthday,
-      user_picture:  filename,
+      userEmail:    data.userEmail,
+      userName:     data.userName,
+      userBirthday: data.userBirthday,
+      userPicture:  filename,
     })
-    .then(() => Utils.writePictureToFile(`${PIC_FOLDER_USERS}${filename}`, data.user_picture))
+    .then(() => Utils.writePictureToFile(`${PIC_FOLDER_USERS}${filename}`, data.userPicture))
   })
-
-export const getUserById = (t, userId) => 
-  Validate.id(userId)
-  .then(() => DB.checkAllTablesExist(t))
-  .then(() => DB.getUserById(t, userId))
 
 export const getUserByEmail = (t, userEmail) => 
   Validate.email(userEmail)
   .then(() => DB.checkAllTablesExist(t))
   .then(() => DB.getUserByEmail(t, userEmail))
 
-export const getUserPicture = (t, userId) =>
-  Validate.id(userId)
+export const getUserPicture = (t, userEmail) =>
+  Validate.email(userEmail)
   .then(() => DB.checkAllTablesExist(t))
-  .then(() => DB.getUserPicturebyId(t, userId))
-  .then(res => Utils.readPictureFromFile(`${PIC_FOLDER_USERS}${res.user_picture}`))
+  .then(() => DB.getUserIdByEmail(t, userEmail))
+  .then(userId => DB.getUserPicturebyId(t, userId))
+  .then(res => Utils.readPictureFromFile(`${PIC_FOLDER_USERS}${res.userPicture}`))
 
 /*
     STAFF 
@@ -68,20 +64,15 @@ export const getStaffByEmail = (t, staffEmail) =>
   .then(() => DB.checkAllTablesExist(t))
   .then(() => DB.getStaffByEmail(t, staffEmail))
 
-export const getStaffbyId = (t, staffId) => 
-  Validate.id(staffId)
-  .then(() => DB.checkAllTablesExist(t))
-  .then(() => DB.getStaffbyId(t, staffId))
-
 export const createNewStaff = (t, data) =>
   Validate.staffCreate(data)
   .then(() => DB.checkAllTablesExist(t))
-  .then(() => DB.checkStaffEmailNotRegistered(t, data.staff_email))
+  .then(() => DB.checkStaffEmailNotRegistered(t, data.staffEmail))
   .then(() => DB.addStaff(t, {
-      staff_email:    data.staff_email,
-      staff_name:     data.staff_name,
-      staff_password: data.staff_password,
-      staff_type:     data.staff_type
+      staffEmail:    data.staffEmail,
+      staffName:     data.staffName,
+      staffPassword: data.staffPassword,
+      staffType:     data.staffType
     })
   )
 
@@ -97,11 +88,11 @@ export const addCard = (t, cardId, userId) =>
   .then(() => DB.checkCardExists(t, cardId))
   .then(() => DB.addCard(t, cardId, userId))
 
-export const getUserCards = (t, userId) => 
-  Validate.id(userId)
+export const getUserCardsByEmail = (t, userEmail) => 
+  Validate.email(userEmail)
   .then(() => DB.checkAllTablesExist(t))
-  .then(() => DB.checkUserExists(t, userId))
-  .then(() => DB.getCardsByUserId(t, userId))
+  .then(() => DB.getUserIdByEmail(t, userEmail))
+  .then(userId => DB.getCardsByUserId(t, userId))
   
 export const getCardOwner = (t, cardId) =>
   Validate.cardId(cardId)
@@ -120,7 +111,7 @@ export const addTicketToCard = (t, cardId, eventId) =>
   .then(() => DB.checkCardExists(t, cardId))
   .then(() => DB.checkEventExists(t, cardId))
   .then(() => DB.checkTicketAlreadyBought(t, cardId, eventId))
-  .then(event => DB.checkUserOldEnough(t, cardId, event.event_min_age))
+  .then(event => DB.checkUserOldEnough(t, cardId, event.eventMinAge))
   .then(() => DB.addTicket(t, cardId, eventId))
 
 export const getAllTicketsByCardId = (t, cardId) =>
@@ -141,7 +132,7 @@ export const useTicket = (t, cardId, eventId) =>
   .then(() => DB.checkAllTablesExist(t))
   .then(() => DB.checkCardExists(t, cardId))
   .then(() => DB.checkEventExists(t, eventId))
-  .then(event => DB.checkUserOldEnough(t, cardId, event.event_min_age))
+  .then(event => DB.checkUserOldEnough(t, cardId, event.eventMinAge))
   .then(() => DB.checkEntryValid(t, cardId, eventId))
   .tap(valid => {
     if (valid)
@@ -179,22 +170,22 @@ export const createNewEvent = (t, data) =>
     let filename: string = `${uuid}.jpg`;
       
     return DB.addEvent(t, {
-      event_name:        data.event_name, 
-      event_description: data.event_description, 
-      event_date:        data.event_date,
-      event_tickets:     data.event_tickets, 
-      event_price:       data.event_price, 
-      event_min_age:     data.event_min_age,
-      event_picture:     filename
+      eventName:        data.eventName, 
+      eventDescription: data.eventDescription, 
+      eventDate:        data.eventDate,
+      eventTickets:     data.eventTickets, 
+      eventPrice:       data.eventPrice, 
+      eventMinAge:      data.eventMinAge,
+      eventPicture:     filename
     })
-    .then(() => Utils.writePictureToFile(`${PIC_FOLDER_EVENTS}${filename}`, data.event_picture))
+    .then(() => Utils.writePictureToFile(`${PIC_FOLDER_EVENTS}${filename}`, data.eventPicture))
   })
 
 export const getEventPicture = (t, eventId) =>
   Validate.id(eventId)
   .then(() => DB.checkAllTablesExist(t))
   .then(() => DB.getEventPicturebyId(t, eventId))
-  .then(res => Utils.readPictureFromFile(`${PIC_FOLDER_EVENTS}${res.event_picture}`))
+  .then(res => Utils.readPictureFromFile(`${PIC_FOLDER_EVENTS}${res.eventPicture}`))
   
 export const getEventTicketsLeft = (t, eventId) =>
   Validate.id(eventId)
@@ -231,7 +222,7 @@ export const registerEntry = (t, eventId, cardId) =>
   .then(() => DB.checkAllTablesExist(t))
   .then(() => DB.checkCardExists(t, cardId))
   .then(() => DB.checkEventExists(t, eventId))
-  .then(event => DB.checkUserOldEnough(t, cardId, event.event_min_age))
+  .then(event => DB.checkUserOldEnough(t, cardId, event.eventMinAge))
   .then(() => DB.checkEntryValid(t, eventId, cardId))
   .tap(status => DB.addEntry(t, eventId, cardId, status))
 
@@ -263,22 +254,55 @@ export const registerConnection = (t, staffId, controllerId) =>
 /*
     MESSAGES 
 */
-export const getControllerMessages = (t, controllerId) =>
+
+export const getAllMessages = (t, messageType) => {
+  if (messageType)
+    return selectAllFromTable(t, DBTables.MESSAGES);
+  else
+    return DB.checkAllTablesExist(t)
+    .then(() => DB.getAllMessagesByType(t, messageType));
+}
+
+export const getControllerMessages = (t, controllerId, messageType) =>
   Validate.controllerId(controllerId)
   .then(() => DB.checkAllTablesExist(t))
   .then(() => DB.checkControllerExists(t, controllerId))
-  .then(() => getMessages(t, controllerId))
-
-export const getStaffMessages = (t, staffId) =>
-  Validate.id(staffId)
+  .then(() => messageType 
+    ? DB.getUnreadMessagesByType(t, controllerId, messageType)
+    : DB.getUnreadMessages(t, controllerId)
+  )
+export const getStaffMessages = (t, staffEmail, messageType) =>
+  Validate.email(staffEmail)
   .then(() => DB.checkAllTablesExist(t))
-  .then(() => DB.checkStaffExists(t, staffId))
-  .then(() => getMessages(t, staffId))
+  .then(() => DB.getStaffIdByEmail(t, staffEmail))
+  .then(staffId => messageType 
+    ? DB.getUnreadMessagesByType(t, staffId, messageType)
+    : DB.getUnreadMessages(t, staffId)
+  )
 
-const getMessages = (t, receiverId) =>
-  DB.checkAllTablesExist(t)
-  .then(() => DB.getUnreadMessages(t, receiverId))
-  .tap(() => DB.setMessagesAsRead(t, receiverId))
+export const insertMessageAsStaff = (t, staffEmail, message) =>
+  Validate.email(staffEmail)
+  .then(() => Validate.messageInsert(message))
+  .then(() => DB.checkAllTablesExist(t))
+  .then(() => DB.getStaffIdByEmail(t, staffEmail))
+  .then(staffId =>
+    DB.insertMessageAsStaff(t, {
+      ...message,
+      messageSender: staffId
+    })
+  )
+
+export const insertMessageAsController = (t, controllerId, message) =>
+  Validate.controllerId(controllerId)
+  .then(() => Validate.messageInsert(message))
+  .then(() => DB.checkAllTablesExist(t))
+  .then(() => DB.checkControllerExists(t, controllerId))
+  .then(() => DB.insertMessageAsController(t, {
+      ...message,
+      messageSender: controllerId
+    })
+  )
+
 
 
 

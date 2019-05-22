@@ -1,5 +1,8 @@
 import * as Utils from "./utils";
 import * as Boom from 'boom';
+import * as Promise from 'bluebird';
+import { Connection } from "pg-promise/typescript/pg-subset";
+
 
 /*
     GENERAL FUNCTIONS 
@@ -32,13 +35,17 @@ export const addUser = (t, user: IInsertUser) =>
     (user_email, user_name, user_birthday, user_picture)
     VALUES
     ($1, $2, $3, $4)`,
-    [user.user_email, user.user_name, user.user_birthday, user.user_picture]
+    [user.userEmail, user.userName, user.userBirthday, user.userPicture]
   ) 
   .catch(e => { throw Boom.badRequest('Error inserting user.', { data: e }); })
 
 export const getUserByEmail = (t, email: string) =>
   t.one('SELECT user_id, user_name, user_birthday FROM users WHERE user_email = $1', email) 
   .catch(e => { throw Boom.notFound('User not found.', { data: e }) })
+
+export const getUserIdByEmail = (t, email: string) =>
+  getUserByEmail(t, email)  
+  .then(result => result.user_id)  
 
 export const getUserById = (t, userId: string) =>
   t.one('SELECT user_email, user_name, user_birthday FROM users WHERE user_id = $1', userId) 
@@ -69,6 +76,10 @@ export const getStaffByEmail = (t, email: string) =>
   t.one('SELECT staff_id, staff_name, staff_password, staff_type FROM staff WHERE staff_email = $1', email) 
   .catch(e => { throw Boom.notFound('Staff not found.', { data: e }) })
 
+export const getStaffIdByEmail = (t, email: string) =>
+  getStaffByEmail(t, email)  
+  .then(result => result.staff_id)  
+
 export const getStaffbyId = (t, staffId: string) =>
   t.one('SELECT staff_email, staff_name, staff_password, staff_type FROM staff WHERE staff_id = $1', staffId) 
   .catch(e => { throw Boom.notFound('Staff not found.', { data: e }) })
@@ -79,7 +90,7 @@ export const addStaff = (t, user: IInsertStaff) =>
     (staff_email, staff_name, staff_password, staff_type)
     VALUES
     ($1, $2, $3, $4)`,
-    [user.staff_email, user.staff_name, user.staff_password, user.staff_type]
+    [user.staffEmail, user.staffName, user.staffPassword, user.staffType]
   ) 
   .catch(e => { throw Boom.badRequest('Error inserting staff.', { data: e }); })
 
@@ -197,8 +208,8 @@ export const addEvent = (t, event: IInsertEvent) =>
       event_tickets, event_price, event_min_age)
     VALUES
     ($1, $2, $3, $4, $5, $6)`,
-    [event.event_name, event.event_description, event.event_date,
-      event.event_tickets, event.event_price, event.event_min_age]
+    [event.eventName, event.eventDescription, event.eventDate,
+      event.eventTickets, event.eventPrice, event.eventMinAge]
   ) 
   .catch(e => { throw Boom.badRequest('Error registering entry.', { data: e }); })
 
@@ -289,6 +300,15 @@ export const resetStaffConnections = (t, staffId: string) =>
   t.none('DELETE FROM connections WHERE staff_id_ref = $1', staffId)
   .catch(e => { throw Boom.conflict('Failed to reset connections.', { data: e }); })
 
+const getControllerConnections = (t, controllerId: string) =>
+  t.any('SELECT staff_id_ref FROM connections WHERE controller_id_ref = $1', controllerId)
+  .catch(e => { throw Boom.conflict('Failed to get connections.', { data: e }); })
+
+const getStaffConnection = (t, staffId: string) =>
+  t.one('SELECT controller_id_ref FROM connections WHERE staffId_id_ref = $1', staffId)
+  .then(data => data.controller_id_ref)
+  .catch(e => { throw Boom.conflict('Failed to get connection.', { data: e }); })
+
 /*
     MESSAGES
 */ 
@@ -304,15 +324,67 @@ export const getUnreadMessages = (t, receiverId: string) =>
   t.any(`
     SELECT message_sender, message_type, message_data
     FROM messages 
-    WHERE message_receiver = $1
-    ORDERR BY message_date ASC`, receiverId) 
+    WHERE message_receiver = $1 AND message_read IS FALSE
+    ORDER BY message_id ASC`, receiverId) 
+  .tap(() => setMessagesAsRead(t, receiverId))
   .catch(e => { throw Boom.conflict('Failed to get messages.', { data: e }); })
 
-export const setMessagesAsRead = (t, receiverId: string) =>
-  t.any(`
+const setMessagesAsRead = (t, receiverId: string) =>
+  t.one(`
     UPDATE messages SET message_read = TRUE 
     WHERE message_receiver = $1`, receiverId)
   .catch(e => { throw Boom.conflict('Failed to set messages as read.', { data: e }); })
+
+export const getAllMessagesByType = (t, messageType) =>
+  t.any('SELECT * FROM messages WHERE message_type = $1', messageType)
+  .catch(e => { throw Boom.conflict('Failed to set messages as read.', { data: e }); })
+
+export const getUnreadMessagesByType = (t, receiverId: string, messageType: string) =>
+  t.any(`
+    SELECT message_sender, message_type, message_data
+    FROM messages 
+    WHERE message_receiver = $1 AND message_read IS FALSE AND message_type = $2
+    ORDER BY message_id ASC`
+    , [receiverId, messageType]) 
+  .tap(() => setMessagesAsReadByType(t, receiverId, messageType))
+  .catch(e => { throw Boom.conflict('Failed to get messages.', { data: e }); })
+
+const setMessagesAsReadByType = (t, receiverId: string, messageType: string) =>
+  t.one(`
+    UPDATE messages SET message_read = TRUE 
+    WHERE message_receiver = $1 AND message_type = $2 AND message_read IS FALSE`
+    , [receiverId, messageType])
+  .catch(e => { throw Boom.conflict('Failed to set messages as read.', { data: e }); })
+
+const insertMessage = (t, message: IInsertMessage) =>
+  t.none(`
+    INSERT INTO messages 
+    (message_sender, message_receiver, message_type, message_data) 
+    VALUES 
+    ($1, $2, $3, $4)`
+    , [message.messageSender, message.messageReceiver, message.messageType, message.messageData])
+  .catch(e => { throw Boom.conflict('Failed insert message.', { data: e }); })
+
+export const insertMessageAsStaff = (t, message: IPreInsertMessage) => 
+  getStaffConnection(t, message.messageSender)
+  .them(controllerId => 
+    insertMessage(t, {
+      ...message,
+      messageReceiver: controllerId
+    })
+  )
+
+export const insertMessageAsController = (t, message: IPreInsertMessage) =>
+  getControllerConnections(t, message.messageSender)
+  .then(connections => 
+    Promise.map(connections, staffId => 
+      insertMessage(t, {
+        ...message,
+        messageReceiver: staffId
+      })
+    )
+  )
+  .catch(e => { throw Boom.conflict('Failed insert messages.', { data: e }); })
 
 /*
     ENUMS 
@@ -335,25 +407,38 @@ export enum DBTables {
 */ 
 
 interface IInsertUser {
-  user_email:    string,
-  user_name:     string,
-  user_birthday: string,
-  user_picture:  string
+  userEmail:    string,
+  userName:     string,
+  userBirthday: string,
+  userPicture:  string
 } 
 
 interface IInsertStaff {
-  staff_email:    string,
-  staff_name:     string,
-  staff_password: string,
-  staff_type:     string
+  staffEmail:    string,
+  staffName:     string,
+  staffPassword: string,
+  staffType:     string
 }
 
 interface IInsertEvent {
-  event_name:        string,
-  event_description: string,
-  event_date:        string,
-  event_tickets:     string
-  event_price:       string
-  event_min_age:     string
-  event_picture:     string
+  eventName:        string,
+  eventDescription: string,
+  eventDate:        string,
+  eventTickets:     string
+  eventPrice:       string
+  eventMinAge:     string
+  eventPicture:     string
+}
+
+interface IInsertMessage {
+  messageSender:   string,
+  messageReceiver: string,
+  messageData:     string,
+  messageType:     string
+}
+
+interface IPreInsertMessage {
+  messageSender:   string,
+  messageData:     string,
+  messageType:     string
 }

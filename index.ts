@@ -57,20 +57,11 @@ app.post('/users', jsonParser, (req, res) =>
   .catch((err) => Utils.errorHandler(err, res))
 )
 
-// Get by id
-app.get('/users/:userId', (req, res) => 
-  db.tx(t => 
-    SV.getUserById(t, req.params.userId)
-    .then(data => res.send(data))
-  )
-  .catch((err) => Utils.errorHandler(err, res))
-)
-
 // Get user picture
-app.get('/users/:userId/picture', (req, res) => 
+app.get('/users/picture', (req, res) => 
   db.tx(t => {
     res.type('jpg');
-    return SV.getUserPicture(t, req.params.userId)
+    return SV.getUserPicture(t, req.query.email)
     .then(data => res.send(data))
   })
   .catch((err) => Utils.errorHandler(err, res))
@@ -92,15 +83,6 @@ app.get('/staff', (req, res) =>
   .catch((err) => Utils.errorHandler(err, res))
 )
 
-// Get staff info
-app.get('/staff/:staffId', (req, res) => 
-  db.tx(t => 
-    SV.getStaffbyId(t, req.params.staffId)
-    .then(data => res.send(data))
-  )
-  .catch((err) => Utils.errorHandler(err, res))
-)
-
 // Create staff
 app.post('/staff', jsonParser, (req, res) => 
   db.tx(t => 
@@ -113,12 +95,16 @@ app.post('/staff', jsonParser, (req, res) =>
 /*
     CARDS 
 */ 
-// Get all cards
-app.get('/cards', (req, res) => 
-  db.tx(t => 
-    SV.selectAllFromTable(t, DBTables.CARDS)
-    .then(data => res.send(data))
-  )
+// Get all cards or specific cards by email
+app.get('/staff', (req, res) => 
+  db.tx(t => {
+    if (req.query.email)
+      return SV.getUserCardsByEmail(t, req.query.email)
+      .then(data => res.send(data))
+    else
+      return SV.selectAllFromTable(t, DBTables.CARDS)
+      .then(data => res.send(data))
+  })
   .catch((err) => Utils.errorHandler(err, res))
 )
 
@@ -132,23 +118,13 @@ app.post('/cards', jsonParser, (req, res) =>
 )
 
 // Get card owner
-app.get('/cards/:cardId/user', (req, res) => 
+app.get('/cards/:cardId', (req, res) => 
   db.tx(t => 
     SV.getCardOwner(t, req.params.cardId)
     .then(data => res.send(data))
   )
   .catch((err) => Utils.errorHandler(err, res))
 )
-
-// Get all user cards
-app.get('/cards/user/:userId', (req, res) => 
-  db.tx(t => 
-    SV.getUserCards(t, req.params.userId)
-    .then(data => res.send(data))
-  )
-  .catch((err) => Utils.errorHandler(err, res))
-)
-
 /*
     TICKETS 
 */
@@ -295,7 +271,7 @@ app.get('/entries/:eventId/:cardId', (req, res) =>
 // Register entry
 app.post('/entries', jsonParser, (req, res) => 
   db.tx(t => 
-    SV.registerEntry(t, req.params.eventId, req.params.cardId)
+    SV.registerEntry(t, req.body.eventId, req.body.cardId)
     .then(entryValid => {
       if (entryValid) 
         res.status(OK).send('Valid entry added.')
@@ -351,48 +327,40 @@ app.post('/connections', jsonParser, (req, res) =>
 /*
     MESSAGES 
 */ 
-// Get all messages
+// Get messages
 app.get('/messages', (req, res) => 
-  db.tx(t => 
-    SV.selectAllFromTable(t, DBTables.MESSAGES)
-    .then(data => res.send(data))
-  )
+  db.tx(t => {
+    if (req.query.staff)
+      SV.getStaffMessages(t, req.query.type, req.query.staff)
+      .then(data => res.send(data))
+    else if (req.query.controller)
+      SV.getControllerMessages(t, req.query.type, req.query.controller)
+      .then(data => res.send(data))
+    else 
+      if (req.query.type)
+        SV.selectAllFromTable(t, req.query.type)
+        .then(data => res.send(data))
+      else
+        SV.selectAllFromTable(t, req.query.type)
+        .then(data => res.send(data))
+  })
   .catch((err) => Utils.errorHandler(err, res))
 )
 
-// Get all messages by staff id
-app.get('/messages/staff/:staffId', (req, res) => 
-  db.tx(t => 
-    SV.getStaffMessages(t, req.params.staffId)
-    .then(data => res.send(data))
-  )
-  .catch((err) => Utils.errorHandler(err, res))
-)
-
-// Get all messages by controller id
-app.get('/messages/controller/:controlerId', (req, res) => 
-  db.tx(t => 
-    SV.getControllerMessages(t, req.params.controllerId)
-    .then(data => res.send(data))
-  )
-  .catch((err) => Utils.errorHandler(err, res))
-)
-
-// send message as staff
+// Send messages
 app.post('/messages', jsonParser, (req, res) => 
-  db.tx(t => 
-    SV.registerConnection(t, req.body.staffId, req.body.controllerId)
-    .then(() => res.send("Connection registered."))
-  )
-  .catch((err) => Utils.errorHandler(err, res))
-)
-
-// send message as controller
-app.post('/messages', jsonParser, (req, res) => 
-  db.tx(t => 
-    SV.registerConnection(t, req.body.staffId, req.body.controllerId)
-    .then(() => res.send("Connection registered."))
-  )
+  db.tx(t => {
+    if (req.query.staff) {
+      SV.insertMessageAsStaff(t, req.query.staff, req.body.message)
+      .then(data => res.send(data))
+    } else if (req.query.controller) {
+      SV.insertMessageAsController(t, req.query.controller, req.body.message)
+      .then(data => res.send(data))
+    } else {
+      SV.selectAllFromTable(t, DBTables.MESSAGES)
+      .then(data => res.send(data))
+    }
+  })
   .catch((err) => Utils.errorHandler(err, res))
 )
 

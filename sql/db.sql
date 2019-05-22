@@ -73,7 +73,6 @@ CREATE TABLE messages (
     message_receiver INTEGER NOT NULL,
     message_type     TEXT NOT NULL,
     message_data     JSONB NOT NULL DEFAULT '{}',
-    message_date     DATE NOT NULL DEFAULT CURRENT_DATE,
     message_read     BOOLEAN NOT NULL DEFAULT FALSE
 );
 
