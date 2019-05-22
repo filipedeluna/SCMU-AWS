@@ -270,7 +270,7 @@ export const addEntry = (t, cardId: string, eventId: string, status: string) =>
   .catch(e => { throw Boom.badRequest('Error registering entry.', { data: e }); })
 
 /*
-    CONNECTIONS
+    CONTROLLERS
 */ 
 
 export const registerController = (t, controllerId: string) =>
@@ -278,7 +278,7 @@ export const registerController = (t, controllerId: string) =>
   .catch(e => { throw Boom.conflict('Failed to register controller.', { data: e }); })
 
 export const checkControllerExists = (t, controllerId: string) =>
-  t.none('SELECT * FROM controllers WHERE controller_id = $1', controllerId)
+  t.one('SELECT * FROM controllers WHERE controller_id = $1', controllerId)
   .catch(e => { throw Boom.conflict('Controller is not registered.', { data: e }); })
 
 

@@ -58,13 +58,13 @@ CREATE TABLE tickets (
 );
 
 CREATE TABLE controllers (
-    controller_id INTEGER PRIMARY KEY,
+    controller_id INTEGER PRIMARY KEY
 );
 
 CREATE TABLE connections (
     controller_id_ref INTEGER NOT NULL REFERENCES controllers(controller_id),
     staff_id_ref      INTEGER NOT NULL REFERENCES staff(staff_id),
-    PRIMARY KEY (controller_id, staff_id_ref)
+    PRIMARY KEY (controller_id_ref, staff_id_ref)
 );
 
 CREATE TABLE messages (
