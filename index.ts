@@ -331,17 +331,17 @@ app.post('/connections', jsonParser, (req, res) =>
 app.get('/messages', (req, res) => 
   db.tx(t => {
     if (req.query.staff)
-      SV.getStaffMessages(t, req.query.type, req.query.staff)
+      return SV.getStaffMessages(t, req.query.type, req.query.staff)
       .then(data => res.send(data))
     else if (req.query.controller)
-      SV.getControllerMessages(t, req.query.type, req.query.controller)
+      return SV.getControllerMessages(t, req.query.type, req.query.controller)
       .then(data => res.send(data))
     else 
       if (req.query.type)
-        SV.getAllMessages(t, req.query.type)
+        return SV.getAllMessages(t, req.query.type)
         .then(data => res.send(data))
       else
-        SV.selectAllFromTable(t, DBTables.MESSAGES)
+        return SV.selectAllFromTable(t, DBTables.MESSAGES)
         .then(data => res.send(data))
   })
   .catch((err) => Utils.errorHandler(err, res))
@@ -351,13 +351,13 @@ app.get('/messages', (req, res) =>
 app.post('/messages', jsonParser, (req, res) => 
   db.tx(t => {
     if (req.query.staff) {
-      SV.insertMessageAsStaff(t, req.query.staff, req.body.message)
+      return SV.insertMessageAsStaff(t, req.query.staff, req.body.message)
       .then(data => res.send(data))
     } else if (req.query.controller) {
-      SV.insertMessageAsController(t, req.query.controller, req.body.message)
+      return SV.insertMessageAsController(t, req.query.controller, req.body.message)
       .then(data => res.send(data))
     } else {
-      SV.selectAllFromTable(t, DBTables.MESSAGES)
+      return SV.selectAllFromTable(t, DBTables.MESSAGES)
       .then(data => res.send(data))
     }
   })
