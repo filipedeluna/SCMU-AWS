@@ -239,21 +239,47 @@ export const registerEntry = (t, eventId, cardId) =>
     CONTROLLERS 
 */
 
-export const registerController = (t, controllerId, controllerIp) =>
+export const registerController = (t, controllerId) =>
   Validate.controllerId(controllerId)
-  .then(() => Validate.ip(controllerIp))
   .then(() => DB.checkAllTablesExist(t))
-  .then(() => DB.registerController(t, controllerId, controllerIp))
+  .then(() => DB.resetControllerConnections(t, controllerId))
+  .then(() => DB.resetMessages(t, controllerId))
+  .then(() => DB.registerController(t, controllerId))
 
 /*
     CONNECTIONS 
 */
 
-export const registerConnection = (t, staffId, staffIp, controllerId) =>
+export const registerConnection = (t, staffId, controllerId) =>
   Validate.id(staffId)
-  .then(() => Validate.ip(staffIp))
   .then(() => Validate.controllerId(controllerId))
   .then(() => DB.checkAllTablesExist(t))
   .then(() => DB.checkStaffExists(t, staffId))
   .then(() => DB.checkControllerExists(t, controllerId))
-  .then(() => DB.registerConnection(t, staffId, staffIp, controllerId))
+  .then(() => DB.resetStaffConnections(t, staffId))
+  .then(() => DB.resetMessages(t, staffId))
+  .then(() => DB.registerConnection(t, staffId, controllerId))
+
+/*
+    MESSAGES 
+*/
+export const getControllerMessages = (t, controllerId) =>
+  Validate.controllerId(controllerId)
+  .then(() => DB.checkAllTablesExist(t))
+  .then(() => DB.checkControllerExists(t, controllerId))
+  .then(() => getMessages(t, controllerId))
+
+export const getStaffMessages = (t, staffId) =>
+  Validate.id(staffId)
+  .then(() => DB.checkAllTablesExist(t))
+  .then(() => DB.checkStaffExists(t, staffId))
+  .then(() => getMessages(t, staffId))
+
+const getMessages = (t, receiverId) =>
+  DB.checkAllTablesExist(t)
+  .then(() => DB.getUnreadMessages(t, receiverId))
+  .tap(() => DB.setMessagesAsRead(t, receiverId))
+
+
+
+

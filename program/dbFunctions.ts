@@ -259,50 +259,60 @@ export const addEntry = (t, cardId: string, eventId: string, status: string) =>
   .catch(e => { throw Boom.badRequest('Error registering entry.', { data: e }); })
 
 /*
-    CONTROLLERS
+    CONNECTIONS
 */ 
 
-export const registerController = (t, controllerId: string, controllerIp: string) =>
-  deleteControllerInfo(t, controllerId)
-  .then(() => t.none(`
-    INSERT INTO controllers 
-    (controller_id, controller_ip)
-    VALUES
-    ($1, $2)`,
-    [controllerId, controllerIp]
-  ))
+export const registerController = (t, controllerId: string) =>
+  t.none(`INSERT INTO controllers (controller_id) VALUES ($1)`, controllerId)
   .catch(e => { throw Boom.conflict('Failed to register controller.', { data: e }); })
 
-export const deleteControllerInfo = (t, controllerId: string) =>
-  t.none('DELETE FROM controllers WHERE controller_id = $1', controllerId)
-  .catch(e => { throw Boom.conflict('Failed to delete controller.', { data: e }); })
-  .then('DELETE FROM connections WHERE controller_id_ref = $1', controllerId)
-  .catch(e => { throw Boom.conflict('Failed to delete previous connections.', { data: e }); })
-
-
 export const checkControllerExists = (t, controllerId: string) =>
-  t.one('SELECT * FROM controllers WHERE controller_id = $1', controllerId)
-  .catch(e => { throw Boom.notFound('Controller not found.', { data: e }); })
+  t.none('SELECT * FROM controllers WHERE controller_id = $1', controllerId)
+  .catch(e => { throw Boom.conflict('Controller is not registered.', { data: e }); })
+
 
 /*
     CONNECTIONS
 */ 
 
-export const registerConnection = (t, staffId: string, staffIp: string, controllerId: string) =>
-  deletePreviousConnection(t, staffId)
-  .then(() => t.none(`
-    INSERT INTO connections 
-    (staff_id, staff_ip, controller_id)
-    VALUES
-    ($1, $2, $3)`,
-    [staffId, staffIp, controllerId]
-  ))
-  .catch(e => { throw Boom.conflict('Failed to register controller.', { data: e }); })
+export const registerConnection = (t, staffId: string, controllerId: string) =>
+  t.none(`INSERT INTO connections (staff_id_ref, controller_id_ref) VALUES ($1, $2)`,
+    [staffId, controllerId]
+  )
+  .catch(e => { throw Boom.conflict('Failed to register connection.', { data: e }); })
 
-export const deletePreviousConnection = (t, staffId: string) =>
+export const resetControllerConnections = (t, controllerId: string) =>
+  t.none('DELETE FROM connections WHERE controller_id_ref = $1', controllerId)
+  .catch(e => { throw Boom.conflict('Failed to reset connections.', { data: e }); })
+
+export const resetStaffConnections = (t, staffId: string) =>
   t.none('DELETE FROM connections WHERE staff_id_ref = $1', staffId)
-  .catch(e => { throw Boom.conflict('Failed to delete previous connection.', { data: e }); })
+  .catch(e => { throw Boom.conflict('Failed to reset connections.', { data: e }); })
 
+/*
+    MESSAGES
+*/ 
+
+export const resetMessages = (t, controllerId: string) =>
+  t.none(`
+    DELETE FROM messages 
+      WHERE message_sender = $1 OR message_receiver = $1`, 
+    controllerId)
+  .catch(e => { throw Boom.conflict('Failed to reset messages.', { data: e }); })
+
+export const getUnreadMessages = (t, receiverId: string) =>
+  t.any(`
+    SELECT message_sender, message_type, message_data
+    FROM messages 
+    WHERE message_receiver = $1
+    ORDERR BY message_date ASC`, receiverId) 
+  .catch(e => { throw Boom.conflict('Failed to get messages.', { data: e }); })
+
+export const setMessagesAsRead = (t, receiverId: string) =>
+  t.any(`
+    UPDATE messages SET message_read = TRUE 
+    WHERE message_receiver = $1`, receiverId)
+  .catch(e => { throw Boom.conflict('Failed to set messages as read.', { data: e }); })
 
 /*
     ENUMS 
@@ -316,7 +326,8 @@ export enum DBTables {
   EVENTS      = 'events',
   ENTRIES     = 'entries',
   CONNECTIONS = 'connections',
-  CONTROLLERS = 'controllers'
+  CONTROLLERS = 'controllers',
+  MESSAGES    = 'messages'
 }
 
 /*

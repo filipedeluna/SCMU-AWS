@@ -5,6 +5,7 @@ DROP TABLE tickets;
 DROP TABLE cards;
 DROP TABLE users;
 DROP TABLE connections;
+DROP TABLE messages;
 DROP TABLE controllers;
 DROP TABLE staff;
 
@@ -57,15 +58,25 @@ CREATE TABLE tickets (
 );
 
 CREATE TABLE controllers (
-    controller_id  INTEGER PRIMARY KEY,
-    controller_ip  TEXT NOT NULL
+    controller_id INTEGER PRIMARY KEY,
 );
 
 CREATE TABLE connections (
-    staff_id_ref       INTEGER PRIMARY KEY REFERENCES staff(staff_id),
-    staff_ip           TEXT NOT NULL,
-    controller_id_ref  INTEGER NOT NULL REFERENCES controllers(controller_id)
+    controller_id_ref INTEGER NOT NULL REFERENCES controllers(controller_id),
+    staff_id_ref      INTEGER NOT NULL REFERENCES staff(staff_id),
+    PRIMARY KEY (controller_id, staff_id_ref)
 );
+
+CREATE TABLE messages (
+    message_id       SERIAL PRIMARY KEY,
+    message_sender   INTEGER NOT NULL,
+    message_receiver INTEGER NOT NULL,
+    message_type     TEXT NOT NULL,
+    message_data     JSONB NOT NULL DEFAULT '{}',
+    message_date     DATE NOT NULL DEFAULT CURRENT_DATE,
+    message_read     BOOLEAN NOT NULL DEFAULT FALSE
+);
+
 
 -- TEST DATA
 INSERT INTO users 

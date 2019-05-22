@@ -268,7 +268,7 @@ app.get('/entries', (req, res) =>
 // Get entries by card id
 app.get('/entries/card/:cardId', (req, res) => 
   db.tx(t => 
-    SV.getEntriesByCardId(t, req.body.cardId)
+    SV.getEntriesByCardId(t, req.params.cardId)
     .then(data => res.send(data))
   )
   .catch((err) => Utils.errorHandler(err, res))
@@ -277,7 +277,7 @@ app.get('/entries/card/:cardId', (req, res) =>
 // Get entries by event id
 app.get('/entries/:eventId', (req, res) => 
   db.tx(t => 
-    SV.getEntriesByEventId(t, req.body.eventId)
+    SV.getEntriesByEventId(t, req.params.eventId)
     .then(data => res.send(data))
   )
   .catch((err) => Utils.errorHandler(err, res))
@@ -286,7 +286,7 @@ app.get('/entries/:eventId', (req, res) =>
 // Get entries by event and card id
 app.get('/entries/:eventId/:cardId', (req, res) => 
   db.tx(t => 
-    SV.getEntriesByCardAndEventId(t, req.body.eventId, req.body.cardId)
+    SV.getEntriesByCardAndEventId(t, req.params.eventId, req.params.cardId)
     .then(data => res.send(data))
   )
   .catch((err) => Utils.errorHandler(err, res))
@@ -295,7 +295,7 @@ app.get('/entries/:eventId/:cardId', (req, res) =>
 // Register entry
 app.post('/entries', jsonParser, (req, res) => 
   db.tx(t => 
-    SV.registerEntry(t, req.body.eventId, req.body.cardId)
+    SV.registerEntry(t, req.params.eventId, req.params.cardId)
     .then(entryValid => {
       if (entryValid) 
         res.status(OK).send('Valid entry added.')
@@ -321,7 +321,7 @@ app.get('/controllers', (req, res) =>
 // Register controller
 app.post('/controllers', jsonParser, (req, res) => 
   db.tx(t => 
-    SV.registerController(t, req.body.controllerId, req.body.controllerIp)
+    SV.registerController(t, req.body.controllerId)
     .then(() => res.send("Controller registered."))
   )
   .catch((err) => Utils.errorHandler(err, res))
@@ -342,7 +342,55 @@ app.get('/connections', (req, res) =>
 // Register connection
 app.post('/connections', jsonParser, (req, res) => 
   db.tx(t => 
-    SV.registerConnection(t, req.body.staffId, req.body.staffIp, req.body.controllerId)
+    SV.registerConnection(t, req.body.staffId, req.body.controllerId)
+    .then(() => res.send("Connection registered."))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+/*
+    MESSAGES 
+*/ 
+// Get all messages
+app.get('/messages', (req, res) => 
+  db.tx(t => 
+    SV.selectAllFromTable(t, DBTables.MESSAGES)
+    .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+// Get all messages by staff id
+app.get('/messages/staff/:staffId', (req, res) => 
+  db.tx(t => 
+    SV.getStaffMessages(t, req.params.staffId)
+    .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+// Get all messages by controller id
+app.get('/messages/controller/:controlerId', (req, res) => 
+  db.tx(t => 
+    SV.getControllerMessages(t, req.params.controllerId)
+    .then(data => res.send(data))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+// send message as staff
+app.post('/messages', jsonParser, (req, res) => 
+  db.tx(t => 
+    SV.registerConnection(t, req.body.staffId, req.body.controllerId)
+    .then(() => res.send("Connection registered."))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
+// send message as controller
+app.post('/messages', jsonParser, (req, res) => 
+  db.tx(t => 
+    SV.registerConnection(t, req.body.staffId, req.body.controllerId)
     .then(() => res.send("Connection registered."))
   )
   .catch((err) => Utils.errorHandler(err, res))

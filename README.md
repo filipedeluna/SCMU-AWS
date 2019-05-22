@@ -62,14 +62,21 @@ POST /entries - regista uma entry. enviar o json seguinte { cardId: string, even
 
 CONTROLLERS\
 GET /controllers - devolve todos os controladores\
-POST /controllers - regista um controlador. enviar o json seguinte { controllerId: string, controllerIp: string }\
+POST /controllers - regista um controlador e faz reset todas as conexoes/mensagens. enviar o json seguinte { controllerId: string }\
 ...
 
 -------------------------------------------------
 
 CONNECTIONS\
 GET /connections - devolve todos as conexoes\
-POST /connections - regista uma conexao. enviar o json seguinte { staffId: string, staffIp: string, staffIp: controllerId }\
+POST /connections - regista uma conexao e faz reset a todas as conexoes/mensagens enviar o json seguinte { staffId: string,  controllerId: string }\
+...
+
+-------------------------------------------------
+
+MESSAGES\
+GET /messages - devolve todos as mensagens\
+
 ...
 
 -------------------------------------------------
