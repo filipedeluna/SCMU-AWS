@@ -24,6 +24,7 @@ export const checkAllTablesExist = t =>
   .then(() => checkTableExists(t, DBTables.ENTRIES))
   .then(() => checkTableExists(t, DBTables.CONNECTIONS))
   .then(() => checkTableExists(t, DBTables.CONTROLLERS))
+  .then(() => checkTableExists(t, DBTables.MESSAGES))
 
 /*
     USERS

@@ -96,7 +96,7 @@ app.post('/staff', jsonParser, (req, res) =>
     CARDS 
 */ 
 // Get all cards or specific cards by email
-app.get('/staff', (req, res) => 
+app.get('/cards', (req, res) => 
   db.tx(t => {
     if (req.query.email)
       return SV.getUserCardsByEmail(t, req.query.email)
