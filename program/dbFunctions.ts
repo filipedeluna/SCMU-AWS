@@ -368,7 +368,7 @@ const insertMessage = (t, message: IInsertMessage) =>
 
 export const insertMessageAsStaff = (t, message: IPreInsertMessage) => 
   getStaffConnection(t, message.messageSender)
-  .them(controllerId => 
+  .then(controllerId => 
     insertMessage(t, {
       ...message,
       messageReceiver: controllerId
