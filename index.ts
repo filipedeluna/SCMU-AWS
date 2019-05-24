@@ -357,8 +357,7 @@ app.post('/messages', jsonParser, (req, res) =>
       return SV.insertMessageAsController(t, req.query.controller, req.body.message)
       .then(data => res.send(data))
     } else {
-      return SV.selectAllFromTable(t, DBTables.MESSAGES)
-      .then(data => res.send(data))
+      return res.status(201).send('Not implemented, send staff or controller query param.')
     }
   })
   .catch((err) => Utils.errorHandler(err, res))
