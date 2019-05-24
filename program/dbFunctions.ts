@@ -306,7 +306,7 @@ const getControllerConnections = (t, controllerId: string) =>
   .catch(e => { throw Boom.conflict('Failed to get connections.', { data: e }); })
 
 const getStaffConnection = (t, staffId: string) =>
-  t.one('SELECT controller_id_ref FROM connections WHERE staffId_id_ref = $1', staffId)
+  t.one('SELECT controller_id_ref FROM connections WHERE staff_id_ref = $1', staffId)
   .then(data => data.controller_id_ref)
   .catch(e => { throw Boom.conflict('Failed to get connection.', { data: e }); })
 
