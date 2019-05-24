@@ -53,7 +53,7 @@ export const getUserPicture = (t, userEmail) =>
   .then(() => DB.checkAllTablesExist(t))
   .then(() => DB.getUserIdByEmail(t, userEmail))
   .then(userId => DB.getUserPicturebyId(t, userId))
-  .then(res => Utils.readPictureFromFile(`${PIC_FOLDER_USERS}${res.userPicture}`))
+  .then(res => Utils.readPictureFromFile(`${PIC_FOLDER_USERS}${res.user_picture}`))
 
 /*
     STAFF 
@@ -185,7 +185,7 @@ export const getEventPicture = (t, eventId) =>
   Validate.id(eventId)
   .then(() => DB.checkAllTablesExist(t))
   .then(() => DB.getEventPicturebyId(t, eventId))
-  .then(res => Utils.readPictureFromFile(`${PIC_FOLDER_EVENTS}${res.eventPicture}`))
+  .then(res => Utils.readPictureFromFile(`${PIC_FOLDER_EVENTS}${res.event_picture}`))
   
 export const getEventTicketsLeft = (t, eventId) =>
   Validate.id(eventId)
