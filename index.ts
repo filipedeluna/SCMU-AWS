@@ -351,10 +351,10 @@ app.get('/messages', (req, res) =>
 app.post('/messages', jsonParser, (req, res) => 
   db.tx(t => {
     if (req.query.staff) {
-      return SV.insertMessageAsStaff(t, req.query.staff, req.body.message)
+      return SV.insertMessageAsStaff(t, req.query.staff, req.body)
       .then(data => res.send(data))
     } else if (req.query.controller) {
-      return SV.insertMessageAsController(t, req.query.controller, req.body.message)
+      return SV.insertMessageAsController(t, req.query.controller, req.body)
       .then(data => res.send(data))
     } else {
       return res.status(201).send('Not implemented, send staff or controller query param.')

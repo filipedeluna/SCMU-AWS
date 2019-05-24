@@ -378,10 +378,10 @@ export const insertMessageAsStaff = (t, message: IPreInsertMessage) =>
 export const insertMessageAsController = (t, message: IPreInsertMessage) =>
   getControllerConnections(t, message.messageSender)
   .then(connections => 
-    Promise.map(connections, staffId => 
+    Promise.map(connections, connection => 
       insertMessage(t, {
         ...message,
-        messageReceiver: staffId
+        messageReceiver: connection.staff_id_ref
       })
     )
   )

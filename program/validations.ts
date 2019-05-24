@@ -20,7 +20,7 @@ const userCreateSchema = Joi.object().keys({
   userName:     Joi.string().min(3).max(30).required(),
   userBirthday: Joi.date().iso().min('1900-01-01').max('now').required(),
   userPicture:  Joi.string().base64({ paddingRequired: false }).required(),
-}).unknown(false);
+});
 
 export const userCreate = user =>
   Joi.validate(user, userCreateSchema)
@@ -32,7 +32,7 @@ const staffCreateSchema = Joi.object().keys({
   staffName:     Joi.string().min(3).max(30).required(),
   staffPassword: Joi.string().min(3).max(20).required(),
   staffType:     Joi.number().integer().min(0).max(2).required(),
-}).unknown(false);
+});
 
 export const staffCreate = staff =>
   Joi.validate(staff, staffCreateSchema)
@@ -47,7 +47,7 @@ const eventCreateSchema = Joi.object().keys({
   eventPrice:       Joi.number().min(0).max(999999).required(),
   eventMinAge:      Joi.number().integer().min(0).max(120).required(),
   eventPicture:     Joi.string().base64({ paddingRequired: false }).required(),
-}).unknown(false);
+});
 
 export const eventCreate = event =>
   Joi.validate(event, eventCreateSchema)
@@ -67,7 +67,7 @@ Joi.validate(cardId, Joi.number().integer().min(10000).max(99999).required())
 const messageInsertSchema = Joi.object().keys({
   messageType:     Joi.string().max(20).required(),
   messageData:     Joi.object().unknown(true).required(),
-}).unknown(false);
+});
 
 export const messageInsert = message =>
   Joi.validate(message, messageInsertSchema)
