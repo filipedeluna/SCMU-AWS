@@ -182,7 +182,7 @@ export const setTicketAsUsed = (t, cardId: string, eventId: string) =>
     if (result)
       throw Boom.forbidden('Ticket was already used.');
   })
-  .then(() => t.one(`
+  .then(() => t.none(`
     UPDATE tickets SET ticket_used = TRUE 
     WHERE cardId_id_ref = $1 AND eventId_id_ref = $2`, 
     [cardId, eventId])
@@ -331,7 +331,7 @@ export const getUnreadMessages = (t, receiverId: string) =>
   .catch(e => { throw Boom.conflict('Failed to get messages.', { data: e }); })
 
 const setMessagesAsRead = (t, receiverId: string) =>
-  t.one(`
+  t.none(`
     UPDATE messages SET message_read = TRUE 
     WHERE message_receiver = $1`, receiverId)
   .catch(e => { throw Boom.conflict('Failed to set messages as read.', { data: e }); })
@@ -344,14 +344,14 @@ export const getUnreadMessagesByType = (t, receiverId: string, messageType: stri
   t.any(`
     SELECT message_sender, message_type, message_data
     FROM messages 
-    WHERE message_receiver = $1 AND message_read IS FALSE AND message_type = $2
+    WHERE message_receiver = $1 AND message_type = $2 AND message_read IS FALSE
     ORDER BY message_id ASC`
     , [receiverId, messageType]) 
   .tap(() => setMessagesAsReadByType(t, receiverId, messageType))
   .catch(e => { throw Boom.conflict('Failed to get messages.', { data: e }); })
 
 const setMessagesAsReadByType = (t, receiverId: string, messageType: string) =>
-  t.one(`
+  t.none(`
     UPDATE messages SET message_read = TRUE 
     WHERE message_receiver = $1 AND message_type = $2 AND message_read IS FALSE`
     , [receiverId, messageType])

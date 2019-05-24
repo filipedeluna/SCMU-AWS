@@ -331,10 +331,10 @@ app.post('/connections', jsonParser, (req, res) =>
 app.get('/messages', (req, res) => 
   db.tx(t => {
     if (req.query.staff)
-      return SV.getStaffMessages(t, req.query.type, req.query.staff)
+      return SV.getStaffMessages(t, req.query.staff, req.query.type)
       .then(data => res.send(data))
     else if (req.query.controller)
-      return SV.getControllerMessages(t, req.query.type, req.query.controller)
+      return SV.getControllerMessages(t, req.query.controller, req.query.type, )
       .then(data => res.send(data))
     else 
       if (req.query.type)
