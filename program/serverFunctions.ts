@@ -80,13 +80,13 @@ export const createNewStaff = (t, data) =>
     CARDS 
 */
 
-export const addCard = (t, cardId, userId) => 
-  Validate.id(userId)
+export const addCard = (t, cardId, userEmail) => 
+  Validate.email(userEmail)
   .then(() => Validate.cardId(cardId))
   .then(() => DB.checkAllTablesExist(t))
-  .then(() => DB.checkUserExists(t, userId))
   .then(() => DB.checkCardExists(t, cardId))
-  .then(() => DB.addCard(t, cardId, userId))
+  .then(() => DB.getUserIdByEmail(t, userEmail))
+  .then(userId => DB.addCard(t, cardId, userId))
 
 export const getUserCardsByEmail = (t, userEmail) => 
   Validate.email(userEmail)

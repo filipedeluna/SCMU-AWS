@@ -111,7 +111,7 @@ app.get('/cards', (req, res) =>
 // Create card
 app.post('/cards', jsonParser, (req, res) => 
   db.tx(t => 
-    SV.addCard(t, req.body.cardId, req.body.userId)
+    SV.addCard(t, req.body.cardId, req.body.userEmail)
     .then(() => res.send('Card created'))
   )
   .catch((err) => Utils.errorHandler(err, res))
