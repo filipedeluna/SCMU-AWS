@@ -101,9 +101,9 @@ VALUES
 INSERT INTO staff 
 (staff_email, staff_name, staff_type)
 VALUES 
-('test_admin@test.com',   'test_admin' ,  0), 
-('test_tickets@test.com', 'test_tickets', 1), 
-('test_entry@test.com',   'test_entry',   2)
+('testadmin@test.com',   'test_admin' ,  0), 
+('testtickets@test.com', 'test_tickets', 1), 
+('testentry@test.com',   'test_entry',   2)
 ; 
 
 INSERT INTO events 
