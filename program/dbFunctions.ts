@@ -280,10 +280,8 @@ export const addEntry = (t, cardId: string, eventId: string, status: string) =>
 
 export const registerController = (t, controllerId: string) =>
   checkControllerExists(t, controllerId)
-  .catch(e =>
-    t.none('INSERT INTO controllers (controller_id) VALUES ($1)', controllerId)
-    .catch(e => { throw Boom.conflict('Failed to register controller.', { data: e }); })
-  )
+  .catch(e => t.none(`INSERT INTO controllers (controller_id) VALUES ($1)`, controllerId))
+  .catch(e => { throw Boom.conflict('Failed to register controller.', { data: e }); })
 
 export const checkControllerExists = (t, controllerId: string) =>
   t.one('SELECT * FROM controllers WHERE controller_id = $1', controllerId)
