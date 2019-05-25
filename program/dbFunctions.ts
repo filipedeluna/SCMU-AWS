@@ -280,8 +280,10 @@ export const addEntry = (t, cardId: string, eventId: string, status: string) =>
 
 export const registerController = (t, controllerId: string) =>
   checkControllerExists(t, controllerId)
-  .catch(e => t.none(`INSERT INTO controllers (controller_id) VALUES ($1)`, controllerId))
-  .catch(e => { throw Boom.conflict('Failed to register controller.', { data: e }); })
+  .catch(e =>
+    t.none('INSERT INTO controllers (controller_id) VALUES ($1)', controllerId)
+    .catch(e => { throw Boom.conflict('Failed to register controller.', { data: e }); })
+  )
 
 export const checkControllerExists = (t, controllerId: string) =>
   t.one('SELECT * FROM controllers WHERE controller_id = $1', controllerId)
@@ -300,7 +302,7 @@ export const registerConnection = (t, staffId: string, controllerId: string) =>
 
 export const resetControllerConnections = (t, controllerId: string) =>
   t.none('DELETE FROM connections WHERE controller_id_ref = $1', controllerId)
-  .catch(e => { throw Boom.conflict('Failed to reset connections.', { data: e }); })
+  .catch(e => { throw Boom.conflict('Failed to reset controller connections.', { data: e }); })
 
 export const resetStaffConnections = (t, staffId: string) =>
   t.none('DELETE FROM connections WHERE staff_id_ref = $1', staffId)
@@ -324,7 +326,7 @@ export const resetMessages = (t, controllerId: string) =>
     DELETE FROM messages 
       WHERE message_sender = $1 OR message_receiver = $1`, 
     controllerId)
-  .catch(e => { throw Boom.conflict('Failed to reset messages.', { data: e }); })
+  .catch(e => { throw Boom.conflict('Failed to reset controller messages.', { data: e }); })
 
 export const getUnreadMessages = (t, receiverId: string) =>
   t.any(`
