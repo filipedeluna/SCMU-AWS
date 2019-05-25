@@ -123,7 +123,7 @@ export const getCardsByUserId = (t, userId: string) =>
   .catch(e => { throw Boom.badRequest('Error getting user cards.', { data: e }); })
 
 export const getCardOwnerByCardId = (t, cardId: string) =>
-  t.one('SELECT user_id_ref FROM cards WHERE card_id = $1', cardId) 
+  t.one('SELECT * FROM cards WHERE card_id = $1', cardId) 
   .catch(e => { throw Boom.notFound('Card not found.', { data: e }); })
 
 export const checkCardExists = (t, cardId: string) => getCardOwnerByCardId(t, cardId)
@@ -262,13 +262,13 @@ export const getEntriesByEventAndCardId = (t, eventId: string, cardId: string) =
   .catch(e => { throw Boom.notFound('Event not found.', { data: e }); })
 
 export const checkEntryValid = (t, eventId: string, cardId: string) =>
-  t.none(`SELECT * FROM entries WHERE event_id_ref = $1 AND card_id_ref = $2`, [eventId, cardId])
+  t.none('SELECT * FROM entries WHERE event_id_ref = $1 AND card_id_ref = $2', [eventId, cardId])
   .then(() => 
-    t.one(`SELECT * FROM tickets WHERE card_id_ref = $1 AND card_id_ref = $2 AND ticket_used IS FALSE`, 
+    t.one('SELECT * FROM tickets WHERE card_id_ref = $1 AND card_id_ref = $2 AND ticket_used IS FALSE', 
     [eventId, cardId])
   )
-  .then(() => true)
-  .catch(() => false)
+  .then(() => 'TRUE')
+  .catch(() => 'FALSE')
 
 export const addEntry = (t, cardId: string, eventId: string, status: string) =>
   t.none(`

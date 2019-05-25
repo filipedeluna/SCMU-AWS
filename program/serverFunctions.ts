@@ -221,12 +221,12 @@ export const getEntriesByCardAndEventId = (t, eventId, cardId) =>
   .then(() => DB.getEntriesByEventAndCardId(t, eventId, cardId))
 
 export const registerEntry = (t, eventId, cardId) =>
-  Validate.id(cardId)
+  Validate.cardId(cardId)
   .then(() => Validate.id(eventId))
   .then(() => DB.checkAllTablesExist(t))
   .then(() => DB.checkCardExists(t, cardId))
   .then(() => DB.checkEventExists(t, eventId))
-  .then(event => DB.checkUserOldEnough(t, cardId, event.eventMinAge))
+  .then(event => DB.checkUserOldEnough(t, cardId, event.event_min_age))
   .then(() => DB.checkEntryValid(t, eventId, cardId))
   .tap(status => DB.addEntry(t, eventId, cardId, status))
 
