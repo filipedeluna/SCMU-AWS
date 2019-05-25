@@ -345,7 +345,7 @@ app.get('/messages', (req, res) =>
       return SV.getStaffMessages(t, req.query.staff, req.query.type)
       .then(data => res.send(data))
     else if (req.query.controller)
-      return SV.getControllerMessages(t, req.query.controller, req.query.type, )
+      return SV.getControllerMessages(t, req.query.controller, req.query.type)
       .then(data => res.send(data))
     else 
       if (req.query.type)

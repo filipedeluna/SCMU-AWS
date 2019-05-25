@@ -77,10 +77,10 @@ MESSAGES\
 GET /messages - devolve todos as mensagens\
 GET /message?type=MESSAGE_TYPE - devolve todos as mensagens de um tipo\
 GET /messages?email=exemplo@email.com - devolve todas as mensagens de um staff com email\
-GET /messages?controller=12341 - devolve todos as mensagens de um controlador com id\
+GET /messages?controller=12341&type=MESSAGE_TYPE - devolve todos as mensagens por ler de um controlador com id, mete como lidas, e do tipo MESSAGE_TYPE. MESSAGE_TYPE não ser incluido para receber todas\
 GET /messages - devolve todos as mensagens\
-GET /messages?email=exemplo@email.com?type=MESSAGE_TYPE - devolve todas as mensagens de um staff com email, mete como lidas, e do tipo MESSAGE_TYPE. MESSAGE_TYPE pode ser nulo para receber todas\
-GET /messages?controller=12341?type=MESSAGE_TYPE - devolve todas as mensagens, mete como lidas, de um controlador com id e do tipo MESSAGE_TYPE. MESSAGE_TYPE pode ser nulo para receber todas\
+GET /messages?email=exemplo@email.com&type=MESSAGE_TYPE - devolve todas as mensagens por ler em que um  staff com email é o receptor, mete como lidas, e do tipo MESSAGE_TYPE. MESSAGE_TYPE pode nao ser incluido para receber todas\
+GET /messages?controller=12341&type=MESSAGE_TYPE - devolve todas as mensagens, mete como lidas, de um controlador com id e do tipo MESSAGE_TYPE. MESSAGE_TYPE pode ser nulo para receber todas\
 POST /messages?staff=(staffemail) - regista uma mensagem de um staff para o arduino a ques esta subscrito { messageType: string, messageData: {} } a messageData não pode ir vazia.. tem de ter no minimo um {}\
 POST /messages?controller=(controllerid) - regista uma mensagem de um controller para todo o staff subscrito { messageType: string, messageData: {} } a messageData não pode ir vazia.. tem de ter no minimo um {} \
 ...
