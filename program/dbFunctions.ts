@@ -49,7 +49,7 @@ export const getUserIdByEmail = (t, email: string) =>
   .then(result => result.user_id)  
 
 export const getUserById = (t, userId: string) =>
-  t.one('SELECT user_email, user_name, user_birthday FROM users WHERE user_id = $1', userId) 
+  t.one('SELECT * FROM users WHERE user_id = $1', userId) 
   .catch(e => { throw Boom.notFound('User not found.', { data: e }) })
 
 export const checkUserExists = (t, userId: string) => getUserById(t, userId)
@@ -124,6 +124,7 @@ export const getCardsByUserId = (t, userId: string) =>
 
 export const getCardOwnerByCardId = (t, cardId: string) =>
   t.one('SELECT * FROM cards WHERE card_id = $1', cardId) 
+  .then(card => card.user_id_ref)
   .catch(e => { throw Boom.notFound('Card not found.', { data: e }); })
 
 export const checkCardExists = (t, cardId: string) => getCardOwnerByCardId(t, cardId)

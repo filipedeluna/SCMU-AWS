@@ -98,6 +98,7 @@ export const getCardOwner = (t, cardId) =>
   Validate.cardId(cardId)
   .then(() => DB.checkAllTablesExist(t))  
   .then(() => DB.getCardOwnerByCardId(t, cardId))
+  .then(userId => DB.getUserById(t, userId))
 
 export const deleteAllCards = t =>
   DB.checkAllTablesExist(t)
