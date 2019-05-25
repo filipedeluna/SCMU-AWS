@@ -132,6 +132,12 @@ export const checkCardNotExists = (t, cardId: string) =>
   t.none('SELECT user_id_ref FROM cards WHERE card_id = $1', cardId) 
   .catch(e => { throw Boom.notFound('Card already exists.', { data: e }); })
 
+export const deleteAllCards = (t) =>
+  t.none('DELETE FROM entries')
+  .then(() => t.none('DELETE FROM tickets'))
+  .then(() => t.none('DELETE FROM cards'))
+  .catch(e => { throw Boom.conflict('Failed to delete all cards.', { data: e }); })
+
 /*
     TICKETS
 */ 

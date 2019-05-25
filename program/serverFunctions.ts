@@ -99,6 +99,10 @@ export const getCardOwner = (t, cardId) =>
   .then(() => DB.checkAllTablesExist(t))  
   .then(() => DB.getCardOwnerByCardId(t, cardId))
 
+export const deleteAllCards = t =>
+  DB.checkAllTablesExist(t)
+  .then(() => DB.deleteAllCards(t))
+
 /*
     TICKETS 
 */

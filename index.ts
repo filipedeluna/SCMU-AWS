@@ -125,6 +125,17 @@ app.get('/cards/:cardId', (req, res) =>
   )
   .catch((err) => Utils.errorHandler(err, res))
 )
+
+
+// Create staff
+app.delete('/cards', (req, res) => 
+  db.tx(t => 
+    SV.deleteAllCards(t)
+    .then(() => res.send('Cards deleted'))
+  )
+  .catch((err) => Utils.errorHandler(err, res))
+)
+
 /*
     TICKETS 
 */

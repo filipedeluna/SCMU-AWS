@@ -22,6 +22,7 @@ GET  /cards - devolve todos os cards\
 GET  /cards?email=exemplo@email.com - devolve os cartoes com este email\
 GET  /cards/(cardId) - devolve o user associado ao cartao\
 POST /cards - adiciona um card a um user - enviar o json seguinte { cardId, userEmail }\
+DELETE /cards - apaga todos os cards, tickets e entries\
 ...
 
 -------------------------------------------------
