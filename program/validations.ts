@@ -55,7 +55,7 @@ export const eventCreate = event =>
 
 // Cards
 export const cardId = cardId =>
-  Joi.validate(cardId, Joi.number().integer().min(10000000).max(99999999).required())
+  Joi.validate(cardId, Joi.number().integer().min(1).max(9999999999).required())
   .catch(result => checkResult(result, 'Invalid card id.'))
 
 // Controllers

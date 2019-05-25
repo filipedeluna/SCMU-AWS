@@ -128,6 +128,10 @@ export const getCardOwnerByCardId = (t, cardId: string) =>
 
 export const checkCardExists = (t, cardId: string) => getCardOwnerByCardId(t, cardId)
 
+export const checkCardNotExists = (t, cardId: string) =>
+  t.none('SELECT user_id_ref FROM cards WHERE card_id = $1', cardId) 
+  .catch(e => { throw Boom.notFound('Card already exists.', { data: e }); })
+
 /*
     TICKETS
 */ 
@@ -275,7 +279,8 @@ export const addEntry = (t, cardId: string, eventId: string, status: string) =>
 */ 
 
 export const registerController = (t, controllerId: string) =>
-  t.none(`INSERT INTO controllers (controller_id) VALUES ($1)`, controllerId)
+  checkControllerExists(t, controllerId)
+  .catch(e => t.none(`INSERT INTO controllers (controller_id) VALUES ($1)`, controllerId))
   .catch(e => { throw Boom.conflict('Failed to register controller.', { data: e }); })
 
 export const checkControllerExists = (t, controllerId: string) =>
