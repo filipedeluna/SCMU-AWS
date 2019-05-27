@@ -264,7 +264,7 @@ export const getEntriesByEventAndCardId = (t, eventId: string, cardId: string) =
 export const checkEntryValid = (t, eventId: string, cardId: string) =>
   t.none('SELECT * FROM entries WHERE event_id_ref = $1 AND card_id_ref = $2', [eventId, cardId])
   .then(() => 
-    t.one('SELECT * FROM tickets WHERE card_id_ref = $1 AND card_id_ref = $2 AND ticket_used IS FALSE', 
+    t.one('SELECT * FROM tickets WHERE event_id_ref = $1 AND card_id_ref = $2 AND ticket_used IS FALSE', 
     [eventId, cardId])
   )
   .then(() => true)
