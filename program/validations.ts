@@ -1,17 +1,19 @@
 import * as Boom from 'boom';
 import * as Joi from '@hapi/joi';
 
+import * as Promise from 'bluebird';
+
 // General
 export const id = id =>
-  Joi.validate(id, Joi.number().integer().min(0).required())
+  bluebirdValidate(id, Joi.number().integer().min(0).required())
   .catch(result => checkResult(result, 'Invalid id.'))
 
 export const email = email =>
-  Joi.validate(email, Joi.string().email().required())
+  bluebirdValidate(email, Joi.string().email().required())
   .catch(result => checkResult(result, 'Invalid email.'))
 
  export const ip = ip =>
-  Joi.validate(ip, Joi.string().ip({ version: 'ipv4', cidr: 'forbidden' }).required())
+  bluebirdValidate(ip, Joi.string().ip({ version: 'ipv4', cidr: 'forbidden' }).required())
   .catch(result => checkResult(result, 'Invalid ip address.'))
 
 // Users
@@ -23,7 +25,7 @@ const userCreateSchema = Joi.object().keys({
 });
 
 export const userCreate = user =>
-  Joi.validate(user, userCreateSchema)
+  bluebirdValidate(user, userCreateSchema)
   .catch(result => checkResult(result, 'Invalid data for user creation.'))
 
 // Staff
@@ -35,7 +37,7 @@ const staffCreateSchema = Joi.object().keys({
 });
 
 export const staffCreate = staff =>
-  Joi.validate(staff, staffCreateSchema)
+  bluebirdValidate(staff, staffCreateSchema)
   .catch(result => checkResult(result, 'Invalid data for staff creation.'))
 
 // Events
@@ -50,18 +52,18 @@ const eventCreateSchema = Joi.object().keys({
 });
 
 export const eventCreate = event =>
-  Joi.validate(event, eventCreateSchema)
+  bluebirdValidate(event, eventCreateSchema)
   .catch(result => checkResult(result, 'Invalid data for event creation.'))
 
 // Cards
 export const cardId = cardId =>
-  Joi.validate(cardId, Joi.number().integer().min(1).max(9999999999).required())
+  bluebirdValidate(cardId, Joi.number().integer().min(1).max(9999999999).required())
   .catch(result => checkResult(result, 'Invalid card id.'))
 
 // Controllers
 export const controllerId = cardId =>
-Joi.validate(cardId, Joi.number().integer().min(10000).max(99999).required())
-.catch(result => checkResult(result, 'Invalid controller id.'))
+  bluebirdValidate(cardId, Joi.number().integer().min(10000).max(99999).required())
+  .catch(result => checkResult(result, 'Invalid controller id.'))
 
 // Messages
 const messageInsertSchema = Joi.object().keys({
@@ -70,7 +72,7 @@ const messageInsertSchema = Joi.object().keys({
 });
 
 export const messageInsert = message =>
-  Joi.validate(message, messageInsertSchema)
+  bluebirdValidate(message, messageInsertSchema)
   .catch(result => checkResult(result, 'Invalid data for message insertion.'))
 
 // Utils
@@ -78,3 +80,6 @@ const checkResult = (result, errorMessage) => {
   if (result.error !== null)
     throw Boom.badData(errorMessage, { data: result.details }) 
   }
+
+const bluebirdValidate = (value, func) =>
+  Promise.method(() => Joi.validate(value, func))()

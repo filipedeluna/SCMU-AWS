@@ -19,6 +19,8 @@
   "homepage": "https://github.com/filipeluna/SCMU-AWS#readme",
   "dependencies": {
     "@hapi/joi": "^15.0.1",
+    "@types/bluebird": "^3.5.27",
+    "@types/boom": "^7.2.1",
     "@types/node": "^11.13.9",
     "bluebird": "^3.5.4",
     "body-parser": "^1.19.0",

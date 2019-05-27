@@ -45,7 +45,7 @@ app.get('/users', (req, res) =>
       return SV.selectAllFromTable(t, DBTables.USERS)
       .then(data => res.send(data))
   })
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 // Create user
@@ -54,7 +54,7 @@ app.post('/users', jsonParser, (req, res) =>
     SV.createNewUser(t, req.body)
   )
   .then(() => res.send("User created."))
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 // Get user picture
@@ -64,7 +64,7 @@ app.get('/users/picture', (req, res) =>
     return SV.getUserPicture(t, req.query.email)
     .then(data => res.send(data))
   })
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 /*
@@ -80,7 +80,7 @@ app.get('/staff', (req, res) =>
       return SV.selectAllFromTable(t, DBTables.STAFF)
       .then(data => res.send(data))
   })
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 // Create staff
@@ -89,7 +89,7 @@ app.post('/staff', jsonParser, (req, res) =>
     SV.createNewStaff(t, req.body)
     .then(() => res.send('Staff created'))
   )
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 /*
@@ -105,7 +105,7 @@ app.get('/cards', (req, res) =>
       return SV.selectAllFromTable(t, DBTables.CARDS)
       .then(data => res.send(data))
   })
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 // Create card
@@ -114,7 +114,7 @@ app.post('/cards', jsonParser, (req, res) =>
     SV.addCard(t, req.body.cardId, req.body.userEmail)
     .then(() => res.send('Card created'))
   )
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 // Get card owner
@@ -123,7 +123,7 @@ app.get('/cards/:cardId', (req, res) =>
     SV.getCardOwner(t, req.params.cardId)
     .then(data => res.send(data))
   )
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 
@@ -133,7 +133,7 @@ app.delete('/cards', (req, res) =>
     SV.deleteAllCards(t)
     .then(() => res.send('Cards deleted'))
   )
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 /*
@@ -145,7 +145,7 @@ app.get('/tickets', (req, res) =>
     SV.selectAllFromTable(t, DBTables.TICKETS)
     .then(data => res.send(data))
   )
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 // Add ticket to card
@@ -154,7 +154,7 @@ app.post('/tickets/buy', jsonParser, (req, res) =>
     SV.addTicketToCard(t, req.body.cardId, req.body.eventId)
     .then(() => res.send('Ticket added to card.'))
   )
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 // Get all tickets by card id
@@ -163,7 +163,7 @@ app.get('/tickets/card/:cardId', (req, res) =>
     SV.getAllTicketsByCardId(t, req.params.cardId)
     .then(data => res.send(data))
   )
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 // Get all tickets by eventId
@@ -172,7 +172,7 @@ app.get('/tickets/event/:eventId', (req, res) =>
     SV.getAllTicketsByEventId(t, req.params.eventId)
     .then(data => res.send(data))
   )
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 // Check ticket is used, use it and create an entry
@@ -187,7 +187,7 @@ app.post('/tickets/use', jsonParser, (req, res) =>
     })
     .then(data => res.send(data))
   )
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 /*
@@ -199,7 +199,7 @@ app.get('/events', (req, res) =>
     SV.selectAllFromTable(t, DBTables.EVENTS)
     .then(data => res.send(data))
   )
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 // Get event by id
@@ -208,7 +208,7 @@ app.get('/events/:eventId', (req, res) =>
     SV.getEventById(t, req.params.eventId)
     .then(data => res.send(data))
   )
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 // Create Event
@@ -217,7 +217,7 @@ app.post('/events', jsonParser, (req, res) =>
     SV.createNewEvent(t, req.body)
   )
   .then(() => res.send("User created."))
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 // Get event picture
@@ -227,7 +227,7 @@ app.get('/events/:eventId/picture', (req, res) =>
     return SV.getEventPicture(t, req.params.eventId)
     .then(data => res.send(data))
   })
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 // Get tickets left for event
@@ -236,7 +236,7 @@ app.get('/events/:eventId/tickets', (req, res) =>
     SV.getEventTicketsLeft(t, req.params.eventId)
   )
   .then(data => res.send(data))
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 /*
@@ -249,7 +249,7 @@ app.get('/entries', (req, res) =>
     SV.selectAllFromTable(t, DBTables.ENTRIES)
     .then(data => res.send(data))
   )
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 // Get entries by card id
@@ -258,7 +258,7 @@ app.get('/entries/card/:cardId', (req, res) =>
     SV.getEntriesByCardId(t, req.params.cardId)
     .then(data => res.send(data))
   )
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 // Get entries by event id
@@ -267,7 +267,7 @@ app.get('/entries/:eventId', (req, res) =>
     SV.getEntriesByEventId(t, req.params.eventId)
     .then(data => res.send(data))
   )
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 // Get entries by event and card id
@@ -276,7 +276,7 @@ app.get('/entries/:eventId/:cardId', (req, res) =>
     SV.getEntriesByCardAndEventId(t, req.params.eventId, req.params.cardId)
     .then(data => res.send(data))
   )
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 // Register entry
@@ -290,7 +290,7 @@ app.post('/entries', jsonParser, (req, res) =>
         res.status(201).send('Invalid entry added.')
     })
   )
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 /*
@@ -302,7 +302,7 @@ app.get('/controllers', (req, res) =>
     SV.selectAllFromTable(t, DBTables.CONTROLLERS)
     .then(data => res.send(data))
   )
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 // Register controller
@@ -311,7 +311,7 @@ app.post('/controllers', jsonParser, (req, res) =>
     SV.registerController(t, req.body.controllerId)
     .then(() => res.send("Controller registered."))
   )
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 /*
@@ -323,7 +323,7 @@ app.get('/connections', (req, res) =>
     SV.selectAllFromTable(t, DBTables.CONNECTIONS)
     .then(data => res.send(data))
   )
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 // Register connection
@@ -332,7 +332,7 @@ app.post('/connections', jsonParser, (req, res) =>
     SV.registerConnection(t, req.body.staffId, req.body.controllerId)
     .then(() => res.send("Connection registered."))
   )
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 /*
@@ -355,7 +355,7 @@ app.get('/messages', (req, res) =>
         return SV.selectAllFromTable(t, DBTables.MESSAGES)
         .then(data => res.send(data))
   })
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 // Send messages
@@ -371,7 +371,7 @@ app.post('/messages', jsonParser, (req, res) =>
       return res.status(201).send('Not implemented, send staff or controller query param.')
     }
   })
-  .catch((err) => Utils.errorHandler(err, res))
+  .catch(err => Utils.errorHandler(err, res))
 )
 
 // Start service

@@ -1,6 +1,8 @@
 import uuid from 'uuid/v4';
 import * as Boom from 'boom';
 
+import * as Promise from 'bluebird';
+
 import { 
   DBTables,
 } from './dbFunctions';
@@ -112,11 +114,15 @@ export const addTicketToCard = (t, cardId, eventId) =>
   Validate.cardId(cardId)
   .then(() => Validate.id(eventId))
   .then(() => DB.checkAllTablesExist(t))
-  .then(() => DB.checkTicketsLeft(t, cardId))
   .then(() => DB.checkCardExists(t, cardId))
-  .then(() => DB.checkEventExists(t, cardId))
+  .then(() => DB.checkEventExists(t, eventId))
+  .then(() => DB.checkTicketsLeft(t, eventId))
   .then(() => DB.checkTicketAlreadyBought(t, cardId, eventId))
-  .then(event => DB.checkUserOldEnough(t, cardId, event.eventMinAge))
+  .then(() => DB.getEventById(t, eventId))
+  .then(event => {
+    DB.getCardOwnerByCardId(t, cardId)
+    .then(userId => DB.checkUserOldEnough(t, userId, event.event_min_age))
+  })
   .then(() => DB.addTicket(t, cardId, eventId))
 
 export const getAllTicketsByCardId = (t, cardId) =>
@@ -135,24 +141,18 @@ export const useTicket = (t, cardId, eventId) =>
   Validate.cardId(cardId)
   .then(() => Validate.id(eventId))
   .then(() => DB.checkAllTablesExist(t))
-  .then(() => DB.checkCardExists(t, cardId))
   .then(() => DB.checkEventExists(t, eventId))
   .then(event => 
     DB.getCardOwnerByCardId(t, cardId)
     .then(userId => DB.checkUserOldEnough(t, userId, event.event_min_age))      
   )
-  .then(() => DB.checkEntryValid(t, cardId, eventId))
+  .then(() => DB.checkEntryValid(t, eventId, cardId))
   .tap(valid => {
     if (valid)
       return DB.setTicketAsUsed(t, cardId, eventId)
   })
-  .tap(valid => {
-    if (valid)
-      return DB.addEntry(t, eventId, cardId, "TRUE")
-    else
-      return DB.addEntry(t, eventId, cardId, "FALSE")
-  })
-
+  .tap(valid => DB.addEntry(t, cardId, eventId, valid ? "TRUE" :"FALSE"))
+  
 export const setTicketAsUsed = (t, cardId, eventId) =>
   Validate.cardId(cardId)
   .then(() => Validate.id(eventId))

@@ -61,7 +61,7 @@ export const getUserPicturebyId = (t, userId: string) =>
 export const checkUserOldEnough = (t, userId: string, minAge: string) =>
   t.one(`
     SELECT * FROM users WHERE user_id = $1 
-    AND DATE_PART('year',AGE(user_birthday)) <= $2`, [userId, minAge]) 
+    AND DATE_PART('year', AGE(user_birthday)) >= $2`, [userId, minAge]) 
   .catch(e => { throw Boom.forbidden('User not old enough.', { data: e }) })
 
 export const checkUserDoesNotExist = (t, email: string) =>
@@ -178,13 +178,12 @@ export const getAllTicketsByCardId = (t, cardId: string) =>
   .catch(e => { throw Boom.badRequest('Error getting tickets by cardId.', { data: e }); })
 
 export const getAllTicketsByEventId = (t, eventId: string) =>
-  t.any('SELECT card_id_ref, ticket_used FROM tickets WHERE eventId_id_ref = $1', eventId)
+  t.any('SELECT card_id_ref, ticket_used FROM tickets WHERE event_id_ref = $1', eventId)
   .catch(e => { throw Boom.badRequest('Error getting tickets by eventId.', { data: e }); })
 
 export const checkTicketUsed = (t, cardId: string, eventId: string) =>
-  t.one('SELECT ticket_used FROM tickets WHERE cardId_id_ref = $1 AND eventId_id_ref = $2', [cardId, eventId])
-  .then(result => result.ticket_used)
-  .then(result => result == 'true' || result == 'TRUE' ? true : false)
+  t.one('SELECT ticket_used FROM tickets WHERE card_id_ref = $1 AND event_id_ref = $2', [cardId, eventId])
+  .then(result => result.ticket_used == 'true' || result.ticket_used == 'TRUE')
   .catch(e => { throw Boom.notFound('Ticket not found.', { data: e }); })
 
 export const setTicketAsUsed = (t, cardId: string, eventId: string) =>
@@ -195,7 +194,7 @@ export const setTicketAsUsed = (t, cardId: string, eventId: string) =>
   })
   .then(() => t.none(`
     UPDATE tickets SET ticket_used = TRUE 
-    WHERE cardId_id_ref = $1 AND eventId_id_ref = $2`, 
+    WHERE card_id_ref = $1 AND event_id_ref = $2`, 
     [cardId, eventId])
   )
   .catch(e => { throw Boom.notFound('Error setting ticket as used.', { data: e }); })
@@ -268,8 +267,8 @@ export const checkEntryValid = (t, eventId: string, cardId: string) =>
     t.one('SELECT * FROM tickets WHERE card_id_ref = $1 AND card_id_ref = $2 AND ticket_used IS FALSE', 
     [eventId, cardId])
   )
-  .then(() => 'TRUE')
-  .catch(() => 'FALSE')
+  .then(() => true)
+  .catch(() => false)
 
 export const addEntry = (t, cardId: string, eventId: string, status: string) =>
   t.none(`
@@ -390,7 +389,7 @@ export const insertMessageAsStaff = (t, message: IPreInsertMessage) =>
 export const insertMessageAsController = (t, message: IPreInsertMessage) =>
   getControllerConnections(t, message.messageSender)
   .then(connections => 
-    Promise.map(connections, connection => 
+    Promise.map(connections, (connection: any) => 
       insertMessage(t, {
         ...message,
         messageReceiver: connection.staff_id_ref
