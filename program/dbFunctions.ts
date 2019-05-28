@@ -241,7 +241,7 @@ export const getEventTicketsLeft = (t, eventId: string) =>
 */ 
 
 export const getEntriesByEventId = (t, eventId: string) =>
-  t.one(`
+  t.any(`
     SELECT entry_id, card_id_ref, entry_date, entry_valid
     FROM entries WHERE event_id_ref = $1`, eventId
   )
