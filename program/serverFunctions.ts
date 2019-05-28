@@ -208,7 +208,8 @@ export const getEventTicketsLeft = (t, eventId) =>
 export const getEntriesByEventId = (t, eventId) =>
   Validate.id(eventId)
   .then(() => DB.checkAllTablesExist(t))
-  .then(() => DB.getEventById(t, eventId))
+  .then(() => DB.checkEventExists(t, eventId))
+  .then(() => DB.getEntriesByEventId(t, eventId))
 
 export const getEntriesByCardId = (t, cardId) =>
   Validate.cardId(cardId)
