@@ -1,5 +1,15 @@
 SCMU-AWS
 
+This was a project for an IoT course. My group's project idea was to create a cloud-based solution for security checkpoints and ticket stores for events. An Arduino with multiple sensors was used coupled with an Android App. Staff could sell tickets to users, validate users' tickets, and etc.
+
+I was tasked with creating a Node.js Web Service hosted in AWS that would manage the communication bewtween terminals (Arduinos) and the Android App (Security staff). All the data was in a Postgres Database in the same machine.
+
+Other functionalities were adding users, events, cards for users that would store tickets for events, users and event pictures and data, etc.
+
+Typescript was used with pg-promise and express. The service was set-up using systemd to prevent crashes and automatically restart.
+
+Routes:
+
 USERS\
 GET  /users - get all users\
 GET  /users?email=exemplo@email.com - get user id by email\
